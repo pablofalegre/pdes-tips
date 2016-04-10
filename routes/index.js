@@ -10,6 +10,7 @@ var Comment = mongoose.model('Comment');
 var User = mongoose.model('User');
 var Idea = mongoose.model('Idea');
 
+
 router.get('/posts', function(req, res, next) {
   Post.find(function(err, posts){
     if(err){ return next(err); }
@@ -30,7 +31,7 @@ router.post('/posts', auth, function(req, res, next) {
 });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res, next) {  
   res.render('index', { title: 'Express' });
 });
 
