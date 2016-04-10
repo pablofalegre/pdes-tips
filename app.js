@@ -34,19 +34,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(passport.initialize());
 
-app.use('/', routes);
-app.use('/users', users);
 
 //Middleware para creacion de eventos. Despues lo muevo a otro lado.
-var activityLog = function(err, req, res, next) {
+var activityLog = function(req, res, next) {
   
-  console.log("response status = " + res.status);
-  console.log("error ? = " + err.status);
-
+  res.on('finish', function(){
+    console.log("Finished " + res.headersSent); // for example
+    console.log("Finished " + res.statusCode);  // for example
+    // Do whatever you want
+  });
+  
   next();
 };
 
-app.all('*', activityLog);
+app.all('/*', activityLog);
+
+
+app.use('/', routes);
+app.use('/users', users);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
