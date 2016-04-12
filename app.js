@@ -11,6 +11,8 @@ require('./models/Posts');
 require('./models/Comments');
 require('./models/Users');
 require('./models/Ideas');
+require('./models/Activities');
+
 
 require('./config/passport');
 
@@ -20,7 +22,7 @@ var users = require('./routes/users');
 
 var app = express();
 
-// view engine setup
+// view engine setuphu
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -34,20 +36,29 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(passport.initialize());
 
-
+var Activity = mongoose.model('Activity');
 //Middleware para creacion de eventos. Despues lo muevo a otro lado.
 var activityLog = function(req, res, next) {
   
   res.on('finish', function(){
-    console.log("Finished " + res.headersSent); // for example
-    console.log("Finished " + res.statusCode);  // for example
-    // Do whatever you want
+    if(res.statusCode == 200){
+      var activity = new Activity({
+        author : req.payload.username,
+        action : "hizo",
+        target : req.path  
+      });
+      
+      activity.save(function(err, activity){
+        if(err){ return next(err); }
+        console.log("saved activity = " + activity);
+      });
+    }
   });
   
   next();
 };
 
-app.all('/*', activityLog);
+app.post('/*', activityLog);
 
 
 app.use('/', routes);
