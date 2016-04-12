@@ -2,9 +2,10 @@ var mongoose = require('mongoose');
 
 var IdeaSchema = new mongoose.Schema({
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  title: String,
   description: String,
   creationDate: { type: Date, default: Date.now },
-  candidate: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  postulant: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   state: String
 });
 
