@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var IdeaSchema = new mongoose.Schema({
-  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  author: String,
   title: String,
   description: String,
   creationDate: { type: Date, default: Date.now },

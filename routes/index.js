@@ -7,8 +7,32 @@ var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
-var User = mongoose.model('User');
 var Idea = mongoose.model('Idea');
+var User = mongoose.model('User');
+
+router.get('/ideas', function(req, res, next) {
+  Idea.find(function(err, ideas){
+    if(err){ return next(err); }
+
+    res.json(ideas);
+  });
+});
+
+router.param('idea', function(req, res, next, id) {
+  var query = Idea.findById(id);
+
+  query.exec(function (err, idea){
+    if (err) { return next(err); }
+    if (!idea) { return next(new Error('can\'t find idea')); }
+
+    req.idea = idea;
+    return next();
+  });
+});
+
+router.get('/ideas/:idea', function(req, res) {  
+    res.json(idea);
+  });
 
 router.get('/posts', function(req, res, next) {
   Post.find(function(err, posts){

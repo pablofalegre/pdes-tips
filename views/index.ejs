@@ -11,7 +11,7 @@
 
     <style> .glyphicon-thumbs-up { cursor:pointer } </style>
   </head>
-  <body ng-app="flapperNews">
+  <body ng-app="tpTips">
     <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
       <ul class="nav navbar-nav">
         <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
@@ -28,35 +28,17 @@
     </div>
     <script type="text/ng-template" id="/home.html">
       <div class="page-header">
-        <h1>Flapper News</h1>
+        <h1>Ideas para TIPs</h1>
       </div>
-
-
-      <h4>Order posts by:</h4>
-      <button type="submit" ng-click="orderPostsBy('-upvotes')">Upvotes</button>
-      <button type="submit" ng-click="orderPostsBy('-downvotes')">Downvotes</button>
-      <button type="submit" ng-click="orderPostsBy('author')">Author</button>
-      <button type="submit" ng-click="orderPostsBy('title')">Title</button>
-      <div ng-repeat="post in posts | orderBy:orderProperty">
-        <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes(post)"></span>
-        {{post.upvotes}}
-        <span class="glyphicon glyphicon-thumbs-down" ng-click="incrementDownvotes(post)"></span>
-        {{post.downvotes}}
+      
+      <div ng-repeat="idea in ideas | orderBy:orderProperty">        
         <span style="font-size:20px; margin-left:10px;">
-          <a ng-show="post.link" href="{{post.link}}">
-            {{post.title}}
-          </a>
-        </span>
-        <span ng-hide="post.link" style="margin-top:30px;">
-          {{post.title}}
-        </span>
-        <span ng-show="post.author">
-          posted by <a>{{post.author}}</a>
+          <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>
         </span>
         <span>
-          <a href="#/posts/{{post._id}}">- ({{post.comments.length}}) Comments</a>          
+          given by {{idea.author}}</a>
         </span>
-        <span am-time-ago=post.date></span>
+        <span am-time-ago=idea.creationDate></span>
       </div>
       <form ng-submit="addPost()" ng-show="isLoggedIn()" style="margin-top:30px;">
         <h3>Add a new post</h3>
@@ -78,6 +60,18 @@
       <div ng-hide="isLoggedIn()">
         <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
       </div>
+    </script>
+
+    <script type="text/ng-template" id="/ideas.html">
+      <div class="page-header">
+        <h3>
+          {{idea.title}}          
+          <h4>
+            {{idea.description}}
+          </h4>
+        </h3>
+      </div>
+      <button type="submit" ng-click="backToHome()">Back to Home</button>
     </script>
 
     <script type="text/ng-template" id="/posts.html">
