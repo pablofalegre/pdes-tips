@@ -66,11 +66,12 @@
       <div class="page-header">
         <h3>
           {{idea.title}}          
-          <h4>
-            {{idea.description}}
-          </h4>
         </h3>
+        given by {{idea.author}}
       </div>
+        <p>
+          {{idea.description}}
+        </p>
       <button type="submit" ng-click="backToHome()">Back to Home</button>
     </script>
 

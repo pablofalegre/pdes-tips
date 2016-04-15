@@ -31,7 +31,7 @@ router.param('idea', function(req, res, next, id) {
 });
 
 router.get('/ideas/:idea', function(req, res) {  
-    res.json(idea);
+    res.json(req.idea);
   });
 
 router.get('/posts', function(req, res, next) {
