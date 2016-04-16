@@ -18,6 +18,14 @@ router.get('/ideas', function(req, res, next) {
   });
 });
 
+router.get('/pending_ideas', function(req, res, next) {
+  Idea.find({ 'state': 'en revision' }, function(err, pending_ideas){
+    if(err){ return next(err); }
+
+    res.json(pending_ideas);
+  });
+});
+
 router.param('idea', function(req, res, next, id) {
   var query = Idea.findById(id);
 

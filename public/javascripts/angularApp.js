@@ -16,6 +16,16 @@ app.config([
 			    }]
 			  }
 	    })
+	    .state('pending_ideas', {
+	      url: '/pending_ideas',
+	      templateUrl: '/pending_ideas.html',
+	      controller: 'PendingIdeasCtrl',
+	      resolve: {
+			    pendingIdeasPromise: ['ideas', function(ideas){
+			      return ideas.getPendingIdeas();
+			    }]
+			  }
+	    })
 	    .state('posts', {
 			  url: '/posts/{id}',
 			  templateUrl: '/posts.html',
@@ -108,7 +118,8 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 
 app.factory('ideas', ['$http', 'auth', function($http, auth){
   var o = {
-    ideas: []
+    ideas: [],
+    pending_ideas: []
   };
   o.home = function(){ 
   	return $http.get('/');
@@ -116,6 +127,11 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
   o.getAll = function() {
     return $http.get('/ideas').success(function(data){
       angular.copy(data, o.ideas);
+    });
+  };
+  o.getPendingIdeas = function() {
+    return $http.get('/pending_ideas').success(function(data){
+      angular.copy(data, o.pending_ideas);
     });
   };
   o.get = function(id) {
@@ -127,7 +143,7 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	  return $http.put('/ideas/'+ idea._id + '/postulate', null, {
 	    headers: {Authorization: 'Bearer '+auth.getToken()}
 	  }).success(function(data){
-	  	idea.postulant = auth.currentUser
+	  	idea.postulant = auth.currentUser;
 	  	idea.state = 'en revision';
 	  });
 	};	
@@ -235,6 +251,15 @@ function($scope, ideas, auth){
 	$scope.acceptPostulant = function(idea) {
 		return idea.state==='disponible';
 	};
+	$scope.inReview = function(idea) {
+		return idea.state==='en revision';
+		};
+		$scope.wasAccepted = function(idea) {
+		return idea.state==='aceptada';
+		};
+		$scope.wasRejected = function(idea) {
+		return idea.state==='rechazada';
+		};
 }]);
 
 app.controller('PostsCtrl', [
@@ -286,6 +311,23 @@ app.controller('IdeasCtrl', [
 		$scope.postulate = function(){
 		  ideas.postulate(idea);
 		};
+		$scope.backToHome = function() {
+	  	$location.path('/');
+		};	
+	}
+]);
+
+app.controller('PendingIdeasCtrl', [
+	'$scope',
+	'ideas',
+	'auth',
+	'$location',
+	function($scope, ideas, auth, $location){
+		$scope.pending_ideas = ideas.pending_ideas
+		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.home = function(){
+			ideas.home();
+		};	
 		$scope.backToHome = function() {
 	  	$location.path('/');
 		};	
