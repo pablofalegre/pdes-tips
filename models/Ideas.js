@@ -9,4 +9,10 @@ var IdeaSchema = new mongoose.Schema({
   state: String
 });
 
+IdeaSchema.methods.postulateUser = function(user_id, callback){
+	this.postulant = user_id;
+	this.state = 'en revision'
+	this.save(callback);
+};
+
 mongoose.model('Idea', IdeaSchema);

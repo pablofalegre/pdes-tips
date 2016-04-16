@@ -31,8 +31,26 @@ router.param('idea', function(req, res, next, id) {
 });
 
 router.get('/ideas/:idea', function(req, res) {  
-    res.json(req.idea);
+    req.idea.populate('postulant', function(err, idea) {
+      if (err) { return next(err); }
+      res.json(idea);
+    });
   });
+
+router.put('/ideas/:idea/postulate', auth, function(req, res, next) {
+  req.idea.postulateUser(auth.currentUser, function(err, idea){
+    if (err) { return next(err); }
+    res.json(idea);
+  });
+});
+
+router.put('/posts/:post/upvote', auth, function(req, res, next) {
+  req.post.upvote(function(err, post){
+    if (err) { return next(err); }
+
+    res.json(post);
+  });
+});
 
 router.get('/posts', function(req, res, next) {
   Post.find(function(err, posts){

@@ -123,6 +123,14 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	    return res.data;
 	  });
 	};
+	o.postulate = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/postulate', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.postulant = auth.currentUser
+	  	idea.state = 'en revision';
+	  });
+	};	
   return o;
 }]);
 
@@ -221,7 +229,12 @@ app.controller('MainCtrl', [
 function($scope, ideas, auth){
 	$scope.orderProperty = '-creationDate';
 	$scope.isLoggedIn = auth.isLoggedIn;
+	$scope.currentUser = auth.currentUser;
 	$scope.ideas = ideas.ideas;	
+
+	$scope.acceptPostulant = function(idea) {
+		return idea.state==='disponible';
+	};
 }]);
 
 app.controller('PostsCtrl', [
@@ -267,6 +280,12 @@ app.controller('IdeasCtrl', [
 		$scope.home = function(){
 			ideas.home();
 		};	
+		$scope.acceptPostulant = function() {
+		return idea.state==='disponible';
+		};
+		$scope.postulate = function(){
+		  ideas.postulate(idea);
+		};
 		$scope.backToHome = function() {
 	  	$location.path('/');
 		};	
