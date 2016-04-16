@@ -38,19 +38,42 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 
 var Activity = mongoose.model('Activity');
+
+var config = {
+  "/ideas" : {
+    get : function(username){ 
+      return new Activity({
+        user : username,
+            action : "visito",
+            target : "los posts"
+      });
+    }
+  }
+}
+
+
 //Middleware para creacion de eventos. Despues lo muevo a otro lado.
 var activityLog = function(req, res, next) {
   
   res.on('finish', function(){
     if(res.statusCode == 200){
 
-      var path = activitiesConf[req.route.path];      
+      var path = config[req.route.path];      
       
+      console.log("path= " + req.route.path);
+      console.log("success, getting path = " + path);
+      console.log("success, getting path = " + config["/ideas"]);
+
+      console.log("success, getting path = " + config["/ideas"]["get"]("sasa"));
+
       if(path){
-          var activity = path.get;
+          var activity = path[req.method];
+
+          console.log("activiti? = " + activity);
 
           if(activity){
-            activity("jorge").save(function(err, activity){
+            
+              activity("jorge").save(function(err, activity){
               if(err){ return next(err); }
               console.log("saved activity = " + activity);
             });            
@@ -64,7 +87,7 @@ var activityLog = function(req, res, next) {
   next();
 };
 
-app.post('/*', activityLog);
+app.all('/*', activityLog);
 
 
 app.use('/', routes);
