@@ -40,8 +40,8 @@
         </span>
         <span am-time-ago=idea.creationDate></span>
       </div>
-      <form ng-submit="addPost()" ng-show="isLoggedIn()" style="margin-top:30px;">
-        <h3>Add a new post</h3>
+      <form ng-submit="addIdea()" ng-show="isLoggedIn()" style="margin-top:30px;">
+        <h3>Agregar nueva idea </h3>
 
         <div class="form-group">
           <input type="text"
@@ -52,10 +52,10 @@
         <div class="form-group">
           <input type="text"
           class="form-control"
-          placeholder="Link"
-          ng-model="link"></input>
+          placeholder="Descripcion"
+          ng-model="description"></input>
         </div>
-        <button type="submit" class="btn btn-primary">Post</button>
+        <button type="submit" class="btn btn-primary">Agregar</button>
       </form>
       <div ng-hide="isLoggedIn()">
         <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>

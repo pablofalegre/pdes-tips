@@ -18,6 +18,22 @@ router.get('/ideas', function(req, res, next) {
   });
 });
 
+router.post('/ideas', auth, function(req, res, next) {
+  console.log("posting on idea");
+  var idea = new Idea(req.body);
+  
+  console.log("idea = " + idea);
+  idea.author = req.payload.username;
+
+  console.log("current user posting idea " + idea.author);
+
+  idea.save(function(err, idea){
+    if(err){ return next(err); }
+
+    res.json(idea);
+  });
+});
+
 router.param('idea', function(req, res, next, id) {
   var query = Idea.findById(id);
 

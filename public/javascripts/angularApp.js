@@ -118,11 +118,21 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
       angular.copy(data, o.ideas);
     });
   };
-  o.get = function(id) {
+  	o.get = function(id) {
 	  return $http.get('/ideas/' + id).then(function(res){
 	    return res.data;
 	  });
 	};
+
+  	o.create = function(idea) {
+  		console.log("creating idea " + idea);
+	  return $http.post('/ideas', idea, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	    	o.ideas.push(data);
+	  });
+	};
+
   return o;
 }]);
 
@@ -215,13 +225,28 @@ app.controller('AuthCtrl', [
 }]);
 
 app.controller('MainCtrl', [
-'$scope',
-'ideas',
-'auth',
-function($scope, ideas, auth){
-	$scope.orderProperty = '-creationDate';
-	$scope.isLoggedIn = auth.isLoggedIn;
-	$scope.ideas = ideas.ideas;	
+	'$scope',
+	'ideas',
+	'auth',
+	function($scope, ideas, auth){
+		$scope.orderProperty = '-creationDate';
+		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.ideas = ideas.ideas;	
+
+		$scope.addIdea = function(){
+			console.log("agregando idea");
+
+			if(!$scope.title || $scope.title === '') { return; };
+			
+	  		ideas.create({
+	  			title: $scope.title,
+	  			description: $scope.description,
+	  			state: "AVAILABLE" 
+  			});
+  			console.log("idea creada");
+  			$scope.title  = '';
+  			$scope.description = '';
+		};
 }]);
 
 app.controller('PostsCtrl', [
@@ -268,7 +293,7 @@ app.controller('IdeasCtrl', [
 			ideas.home();
 		};	
 		$scope.backToHome = function() {
-	  	$location.path('/');
-		};	
+	  		$location.path('/');
+		};
 	}
 ]);

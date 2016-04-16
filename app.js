@@ -39,51 +39,35 @@ app.use(passport.initialize());
 
 var Activity = mongoose.model('Activity');
 
-var config = {
-  "/ideas" : {
-    get : function(username){ 
-      return new Activity({
-        user : username,
-            action : "visito",
-            target : "los posts"
-      });
-    }
-  }
-}
+
 
 
 //Middleware para creacion de eventos. Despues lo muevo a otro lado.
 var activityLog = function(req, res, next) {
   
   res.on('finish', function(){
-    if(res.statusCode == 200){
 
-      var path = config[req.route.path];      
+    //despues se podria hacer algo para que un middeware deje un usuario siempre (un Anonimo si no estan logeados), y evitamos preguntar.
+    if(res.statusCode == 200 && req.payload){
       
-      console.log("path= " + req.route.path);
-      console.log("success, getting path = " + path);
-      console.log("success, getting path = " + config["/ideas"]);
+      var activity = activitiesConf.find(req.route.path, req.method);
 
-      console.log("success, getting path = " + config["/ideas"]["get"]("sasa"));
+      console.log("activity ? = " + activity);
 
-      if(path){
-          var activity = path[req.method];
-
-          console.log("activiti? = " + activity);
-
-          if(activity){
-            
-              activity("jorge").save(function(err, activity){
-              if(err){ return next(err); }
-              console.log("saved activity = " + activity);
-            });            
+      activity.map(function(act){
+        act.map(function(actFunc){
+          actFunc(req.payload.username).save(function(err, activity){
+          if(err){
+            console.log('error saving ' + err);
+            return next(err); 
           }
-      }
-
-      
-    }
-  });
-  
+          console.log("saved activity = " + activity);
+          });
+        });
+        
+      });
+    }   
+  });  
   next();
 };
 
