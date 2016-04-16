@@ -15,4 +15,14 @@ IdeaSchema.methods.postulateUser = function(user_id, callback){
 	this.save(callback);
 };
 
+IdeaSchema.methods.accept = function(user_id, callback){
+	this.state = 'aceptada'
+	this.save(callback);
+};
+
+IdeaSchema.methods.reject = function(user_id, callback){
+	this.state = 'rechazada'
+	this.save(callback);
+};
+
 mongoose.model('Idea', IdeaSchema);

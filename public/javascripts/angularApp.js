@@ -146,7 +146,21 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	  	idea.postulant = auth.currentUser;
 	  	idea.state = 'en revision';
 	  });
+	};
+	o.accept = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/accept', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'aceptada';
+	  });
 	};	
+	o.reject = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/reject', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'rechazada';
+	  });
+	};		
   return o;
 }]);
 
@@ -302,9 +316,6 @@ app.controller('IdeasCtrl', [
 	function($scope, ideas, idea, auth, $location){
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.idea = idea;
-		$scope.home = function(){
-			ideas.home();
-		};	
 		$scope.acceptPostulant = function() {
 		return idea.state==='disponible';
 		};
@@ -312,7 +323,7 @@ app.controller('IdeasCtrl', [
 		  ideas.postulate(idea);
 		};
 		$scope.backToHome = function() {
-	  	$location.path('/');
+	  	history.back();
 		};	
 	}
 ]);
@@ -330,6 +341,12 @@ app.controller('PendingIdeasCtrl', [
 		};	
 		$scope.backToHome = function() {
 	  	$location.path('/');
+		};
+		$scope.acceptIdea = function(idea){
+		  ideas.accept(idea);
+		};
+		$scope.rejectIdea = function(idea){
+		  ideas.reject(idea);
 		};	
 	}
 ]);

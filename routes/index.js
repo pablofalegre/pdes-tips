@@ -52,6 +52,22 @@ router.put('/ideas/:idea/postulate', auth, function(req, res, next) {
   });
 });
 
+router.put('/ideas/:idea/accept', auth, function(req, res, next) {
+  idea = Idea.find(req.idea);
+  req.idea.accept(auth.currentUser, function(err, idea){
+    if (err) { return next(err); }
+    res.json(idea);
+  });
+});
+
+router.put('/ideas/:idea/reject', auth, function(req, res, next) {
+  idea = Idea.find(req.idea);
+  req.idea.reject(auth.currentUser, function(err, idea){
+    if (err) { return next(err); }
+    res.json(idea);
+  });
+});
+
 router.put('/posts/:post/upvote', auth, function(req, res, next) {
   req.post.upvote(function(err, post){
     if (err) { return next(err); }

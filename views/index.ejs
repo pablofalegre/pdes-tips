@@ -45,26 +45,6 @@
         <label ng-show="wasAccepted(idea)" class="label label-success">Aceptada</label>
         <label ng-show="wasRejected(idea)" class="label label-danger">Rechazada</label>        
       </div>
-      <form ng-submit="addPost()" ng-show="isLoggedIn()" style="margin-top:30px;">
-        <h3>Add a new post</h3>
-
-        <div class="form-group">
-          <input type="text"
-            class="form-control"
-            placeholder="Title"
-            ng-model="title"></input>
-        </div>
-        <div class="form-group">
-          <input type="text"
-          class="form-control"
-          placeholder="Link"
-          ng-model="link"></input>
-        </div>
-        <button type="submit" class="btn btn-primary">Post</button>
-      </form>
-      <div ng-hide="isLoggedIn()">
-        <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
-      </div>
     </script>
 
     <script type="text/ng-template" id="/ideas.html">
@@ -80,7 +60,7 @@
       <div ng-show="isLoggedIn()">
           <button ng-show="acceptPostulant()" class="btn-primary" ng-click="postulate()">Postularme</button>
       </div>  
-      <button type="submit" ng-click="backToHome()">Back to Home</button>
+      <button type="submit" ng-click="backToHome()">Volver</button>
     </script>
 
     <script type="text/ng-template" id="/pending_ideas.html">
@@ -96,11 +76,11 @@
         </span>
         <span am-time-ago=idea.creationDate></span>
         <span ng-show="isLoggedIn()">
-          <button class="btn-success" ng-click="acceptIdea()">Aceptar idea</button>
-          <button class="btn-danger" ng-click="rejectIdea()">Rechazar idea</button>
+          <button class="btn-success" ng-click="acceptIdea(idea)">Aceptar idea</button>
+          <button class="btn-danger" ng-click="rejectIdea(idea)">Rechazar idea</button>
         </span>      
       </div>
-      <button type="submit" ng-click="backToHome()">Back to Home</button>      
+      <button type="submit" ng-click="backToHome()">Volver</button>      
       <div ng-hide="isLoggedIn()">
         <h3>Debe <a href="/#/login">Ingresar</a> o <a href="/#/register">Registrarse</a> para poder usar esa funcion</h3>
       </div>
