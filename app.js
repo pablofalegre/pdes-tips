@@ -12,6 +12,7 @@ require('./models/Comments');
 require('./models/Users');
 require('./models/Ideas');
 require('./models/Activities');
+var activitiesConf = require('./models/ActivitiesConfig');
 
 
 require('./config/passport');
@@ -42,16 +43,21 @@ var activityLog = function(req, res, next) {
   
   res.on('finish', function(){
     if(res.statusCode == 200){
-      var activity = new Activity({
-        author : req.payload.username,
-        action : "hizo",
-        target : req.path  
-      });
+
+      var path = activitiesConf[req.route.path];      
       
-      activity.save(function(err, activity){
-        if(err){ return next(err); }
-        console.log("saved activity = " + activity);
-      });
+      if(path){
+          var activity = path.get;
+
+          if(activity){
+            activity("jorge").save(function(err, activity){
+              if(err){ return next(err); }
+              console.log("saved activity = " + activity);
+            });            
+          }
+      }
+
+      
     }
   });
   

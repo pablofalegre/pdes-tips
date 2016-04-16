@@ -10,5 +10,4 @@ ActivitySchema.methods.print = function() {
   return this.user.username + " " + this.action + " " + target;
 };
 
-
 mongoose.model('Activity', ActivitySchema);
