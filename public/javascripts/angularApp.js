@@ -1,4 +1,4 @@
-var app = angular.module('flapperNews', ['ui.router','angularMoment']);
+var app = angular.module('tpTips', ['ui.router','angularMoment']);
 
 app.config([
 	'$stateProvider',
@@ -11,8 +11,8 @@ app.config([
 	      templateUrl: '/home.html',
 	      controller: 'MainCtrl',
 	      resolve: {
-			    postPromise: ['posts', function(posts){
-			      return posts.getAll();
+			    ideaPromise: ['ideas', function(ideas){
+			      return ideas.getAll();
 			    }]
 			  }
 	    })
@@ -26,26 +26,36 @@ app.config([
 				    }]
 				  }
 			})
-			.state('login', {
-			  url: '/login',
-			  templateUrl: '/login.html',
-			  controller: 'AuthCtrl',
-			  onEnter: ['$state', 'auth', function($state, auth){
-			    if(auth.isLoggedIn()){
-			      $state.go('home');
-			    }
-			  }]
+	    .state('ideas', {
+			  url: '/ideas/{id}',
+			  templateUrl: '/ideas.html',
+			  controller: 'IdeasCtrl',
+				  resolve: {
+				    idea: ['$stateParams', 'ideas', function($stateParams, ideas) {
+				      return ideas.get($stateParams.id);
+				    }]
+				  }
 			})
-			.state('register', {
-			  url: '/register',
-			  templateUrl: '/register.html',
-			  controller: 'AuthCtrl',
-			  onEnter: ['$state', 'auth', function($state, auth){
-			    if(auth.isLoggedIn()){
-			      $state.go('home');
-			    }
-			  }]
-			});
+		.state('login', {
+		  url: '/login',
+		  templateUrl: '/login.html',
+		  controller: 'AuthCtrl',
+		  onEnter: ['$state', 'auth', function($state, auth){
+		    if(auth.isLoggedIn()){
+		      $state.go('home');
+		    }
+		  }]
+		})
+		.state('register', {
+		  url: '/register',
+		  templateUrl: '/register.html',
+		  controller: 'AuthCtrl',
+		  onEnter: ['$state', 'auth', function($state, auth){
+		    if(auth.isLoggedIn()){
+		      $state.go('home');
+		    }
+		  }]
+		});
 	  $urlRouterProvider.otherwise('home');
 	}
 ]);
@@ -54,11 +64,11 @@ app.factory('auth', ['$http', '$window', function($http, $window){
   var auth = {};
 
 	auth.saveToken = function (token){
-	  $window.localStorage['flapper-news-token'] = token;
+	  $window.localStorage['tp-tips-token'] = token;
 	};
 
 	auth.getToken = function (){
-	  return $window.localStorage['flapper-news-token'];
+	  return $window.localStorage['tp-tips-token'];
 	};
 	auth.isLoggedIn = function(){
 	  var token = auth.getToken();
@@ -90,10 +100,30 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 	  });
 	};
 	auth.logOut = function(){
-	  $window.localStorage.removeItem('flapper-news-token');
+	  $window.localStorage.removeItem('tp-tips-token');
 	};
 
   return auth;
+}]);
+
+app.factory('ideas', ['$http', 'auth', function($http, auth){
+  var o = {
+    ideas: []
+  };
+  o.home = function(){ 
+  	return $http.get('/');
+  };
+  o.getAll = function() {
+    return $http.get('/ideas').success(function(data){
+      angular.copy(data, o.ideas);
+    });
+  };
+  o.get = function(id) {
+	  return $http.get('/ideas/' + id).then(function(res){
+	    return res.data;
+	  });
+	};
+  return o;
 }]);
 
 app.factory('posts', ['$http', 'auth', function($http, auth){
@@ -186,31 +216,12 @@ app.controller('AuthCtrl', [
 
 app.controller('MainCtrl', [
 '$scope',
-'posts',
+'ideas',
 'auth',
-function($scope, posts, auth){
-	$scope.orderProperty = '-upvotes';
+function($scope, ideas, auth){
+	$scope.orderProperty = '-creationDate';
 	$scope.isLoggedIn = auth.isLoggedIn;
-	$scope.posts = posts.posts;
-	$scope.addPost = function(){
-		if(!$scope.title || $scope.title === '') { return; }
-	  posts.create({
-	    title: $scope.title,
-		link: $scope.link,
-		date: new Date(),
-	  });
-	  $scope.title = '';
-	  $scope.link = '';
-	};
-	$scope.incrementUpvotes = function(post) {
-	  	posts.upvote(post);
-	};
-	$scope.incrementDownvotes = function(post) {
-	  	posts.downvote(post);
-	};
-	$scope.orderPostsBy = function(orderProperty){
-		$scope.orderProperty = orderProperty;
-	};
+	$scope.ideas = ideas.ideas;	
 }]);
 
 app.controller('PostsCtrl', [
@@ -238,6 +249,24 @@ app.controller('PostsCtrl', [
 	  	posts.upvoteComment(post, comment);
 		};
 
+		$scope.backToHome = function() {
+	  	$location.path('/');
+		};	
+	}
+]);
+
+app.controller('IdeasCtrl', [
+	'$scope',
+	'ideas',
+	'idea',
+	'auth',
+	'$location',
+	function($scope, ideas, idea, auth, $location){
+		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.idea = idea;
+		$scope.home = function(){
+			ideas.home();
+		};	
 		$scope.backToHome = function() {
 	  	$location.path('/');
 		};	
