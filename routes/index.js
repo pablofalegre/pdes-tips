@@ -11,7 +11,7 @@ var Idea = mongoose.model('Idea');
 var User = mongoose.model('User');
 
 router.get('/ideas', function(req, res, next) {
-  Idea.find(function(err, ideas){
+  Idea.find({ 'state': {'$ne': 'eliminada'} }, function(err, ideas){
     if(err){ return next(err); }
 
     res.json(ideas);
