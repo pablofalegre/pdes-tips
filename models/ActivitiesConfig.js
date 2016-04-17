@@ -17,8 +17,17 @@ var activitiesConfig = {
   	POST : function(username, req, res){ 
     	return new Activity({
         	user : username,
-            action : "subio una idea",
-            target : req.body.title
+          action : "subio una idea",
+          target : req.body.title
+      });
+    }
+  },
+  "/ideas/:idea/postulate" : {
+    PUT : function(username, req, res){ 
+      return new Activity({
+          user : username,
+          action : "se postulo en",
+          target : req.idea.title
       });
     } 
   }
@@ -30,9 +39,9 @@ activitiesConfig.find = function(url, method){
 	console.log('finding url ' + url + ', method = ' + method);
 
   if(this[url]){
-    return Optional.ofNullable(this[url][method])
+    return Optional.ofNullable(this[url][method]);
   } else {
-    return Optional.NONE;
+    return Optional.empty();
   }
 
 }

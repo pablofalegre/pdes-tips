@@ -12,7 +12,7 @@ var Idea = mongoose.model('Idea');
 var User = mongoose.model('User');
 
 router.get('/ideas', function(req, res, next) {
-  Idea.find(function(err, ideas){
+  Idea.find({ 'state': {'$ne': 'eliminada'} }, function(err, ideas){
     if(err){ return next(err); }
 
     res.json(ideas);
@@ -31,6 +31,15 @@ router.post('/ideas', auth, function(req, res, next) {
   });
 });
 
+
+router.get('/pending_ideas', function(req, res, next) {
+  Idea.find({ 'state': 'en revision' }, function(err, pending_ideas){
+    if(err){ return next(err); }
+
+    res.json(pending_ideas);
+  });
+});
+
 router.param('idea', function(req, res, next, id) {
   var query = Idea.findById(id);
 
@@ -43,9 +52,45 @@ router.param('idea', function(req, res, next, id) {
   });
 });
 
-router.get('/ideas/:idea', function(req, res) { 
-    res.json(req.idea);
+router.get('/ideas/:idea', function(req, res, next) {  
+    req.idea.populate('postulant', function(err, idea) {
+      if (err) { return next(err); }
+      res.json(idea);
+    });
   });
+
+router.put('/ideas/:idea/postulate', auth, function(req, res, next) {
+  idea = Idea.find(req.idea);
+  idea.postulant = req.payload.username;
+  req.idea.postulateUser(req.payload.username, function(err, idea){
+    if (err) { return next(err); }
+    res.json(idea);
+  });
+});
+
+router.put('/ideas/:idea/accept', auth, function(req, res, next) {
+  idea = Idea.find(req.idea);
+  req.idea.accept(req.payload.username, function(err, idea){
+    if (err) { return next(err); }
+    res.json(idea);
+  });  
+});
+
+router.put('/ideas/:idea/reject', auth, function(req, res, next) {
+  idea = Idea.find(req.idea);
+  req.idea.reject(req.payload.username, function(err, idea){
+    if (err) { return next(err); }
+    res.json(idea);
+  });
+});
+
+router.put('/posts/:post/upvote', auth, function(req, res, next) {
+  req.post.upvote(function(err, post){
+    if (err) { return next(err); }
+
+    res.json(post);
+  });
+});
 
 
 router.get('/activities', function(req, res, next) {

@@ -35,14 +35,22 @@
           <a href="#/activities">Actividades</a>
       </span>
 
+
+      <a href="#/pending_ideas">Ver Tareas Pendientes</a>
+
       <div ng-repeat="idea in ideas | orderBy:orderProperty">        
         <span style="font-size:20px; margin-left:10px;">
           <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>
         </span>
         <span>
-          given by {{idea.author}}</a>
+          propuesta por <a>{{idea.author.username}}</a>
         </span>
+
         <span am-time-ago=idea.creationDate></span>
+        <label ng-show="acceptPostulant(idea)" class="label label-primary">Disponible</label>
+        <label ng-show="inReview(idea)" class="label label-info">En Revision</label>
+        <label ng-show="wasAccepted(idea)" class="label label-success">Aceptada</label>
+        <label ng-show="wasRejected(idea)" class="label label-danger">Rechazada</label>  
       </div>
       <form ng-submit="addIdea()" ng-show="isLoggedIn()" style="margin-top:30px;">
         <h3>Agregar nueva idea </h3>
@@ -70,12 +78,39 @@
       <div class="page-header">
         <h3>
           {{idea.title}}          
-          <h4>
-            {{idea.description}}
-          </h4>
         </h3>
+        propuesta por <a>{{idea.authorName()}}</a>
       </div>
-      <button type="submit" ng-click="backToHome()">Back to Home</button>
+        <p>
+          {{idea.description}}
+        </p>
+      <div ng-show="isLoggedIn()">
+          <button ng-show="acceptPostulant()" class="btn-primary" ng-click="postulate()">Postularme</button>
+      </div>  
+      <button type="submit" ng-click="backToHome()">Volver</button>
+    </script>
+
+    <script type="text/ng-template" id="/pending_ideas.html">
+      <div class="page-header">
+        <h1>Ideas pendientes de revision</h1>
+      </div>
+      <div ng-repeat="idea in ideas | orderBy:orderProperty">        
+        <span style="font-size:20px; margin-left:10px;">
+          <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>
+        </span>
+        <span>
+          propuesta por <a>{{idea.author.username}}</a>
+        </span>
+        <span am-time-ago=idea.creationDate></span>
+        <span ng-show="isLoggedIn()">
+          <button class="btn-success" ng-click="acceptIdea(idea)">Aceptar idea</button>
+          <button class="btn-danger" ng-click="rejectIdea(idea)">Rechazar idea</button>
+        </span>      
+      </div>
+      <button type="submit" ng-click="backToHome()">Volver</button>      
+      <div ng-hide="isLoggedIn()">
+        <h3>Debe <a href="/#/login">Ingresar</a> o <a href="/#/register">Registrarse</a> para poder usar esa funcion</h3>
+      </div>
     </script>
 
     <script type="text/ng-template" id="/activities.html">

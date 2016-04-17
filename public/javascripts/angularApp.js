@@ -16,6 +16,16 @@ app.config([
 			    }]
 			  }
 	    })
+	    .state('pending_ideas', {
+	      url: '/pending_ideas',
+	      templateUrl: '/pending_ideas.html',
+	      controller: 'PendingIdeasCtrl',
+	      resolve: {
+			    pendingIdeasPromise: ['ideas', function(ideas){
+			      return ideas.getPendingIdeas();
+			    }]
+			  }
+	    })
 	    .state('posts', {
 			  url: '/posts/{id}',
 			  templateUrl: '/posts.html',
@@ -119,7 +129,8 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 
 app.factory('ideas', ['$http', 'auth', function($http, auth){
   var o = {
-    ideas: []
+    ideas: [],
+    pending_ideas: []
   };
   o.home = function(){ 
   	return $http.get('/');
@@ -129,19 +140,38 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
       angular.copy(data, o.ideas);
     });
   };
-  	o.get = function(id) {
-
-  		console.log('getting idea ');
-	  	return $http.get('/ideas/' + id).error(function(error){
-	      console.log('error gettign idea = ' + error);
-	      $scope.error = error;
-	    }).then(function(res){
-	  		console.log('tehn return');
-	    	return res.data;
-	  	});
+  o.getPendingIdeas = function() {
+    return $http.get('/pending_ideas').success(function(data){
+      angular.copy(data, o.pending_ideas);
+    });
+  };
+  o.get = function(id) {
+	  return $http.get('/ideas/' + id).then(function(res){
+	    return res.data;
+	  });
 	};
-
-  	o.create = function(idea) {
+	o.postulate = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/postulate', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'en revision';
+	  });
+	};
+	o.accept = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/accept', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'aceptada';
+	  });
+	};	
+	o.reject = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/reject', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'rechazada';
+	  });
+	};		
+	o.create = function(idea) {
   		console.log("creating idea " + idea);
 	  return $http.post('/ideas', idea, {
 	    headers: {Authorization: 'Bearer '+auth.getToken()}
@@ -152,6 +182,7 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 
   return o;
 }]);
+
 
 app.factory('activities', ['$http', 'auth', function($http, auth){
   var o = {
@@ -167,7 +198,6 @@ app.factory('activities', ['$http', 'auth', function($http, auth){
       angular.copy(data, o.activities);
     });
   };
-
   return o;
 }]);
 
@@ -266,19 +296,30 @@ app.controller('MainCtrl', [
 	function($scope, ideas, auth){
 		$scope.orderProperty = '-creationDate';
 		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.currentUser = auth.currentUser;
 		$scope.ideas = ideas.ideas;	
 
+		$scope.acceptPostulant = function(idea) {
+			return idea.state==='disponible';
+		};
+		$scope.inReview = function(idea) {
+			return idea.state==='en revision';
+			};
+		$scope.wasAccepted = function(idea) {
+			return idea.state==='aceptada';
+			};
+		$scope.wasRejected = function(idea) {
+			return idea.state==='rechazada';
+		};		
 		$scope.addIdea = function(){
-
 			if(!$scope.title || $scope.title === '') { return; };
-			
 	  		ideas.create({
 	  			title: $scope.title,
 	  			description: $scope.description,
 	  			state: "disponible" 
-  			});
-  			$scope.title  = '';
-  			$scope.description = '';
+				});
+				$scope.title  = '';
+				$scope.description = '';
 		};
 }]);
 
@@ -325,12 +366,44 @@ app.controller('IdeasCtrl', [
 
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.idea = idea;
+		$scope.acceptPostulant = function() {
+		return idea.state==='disponible';
+		};
+		$scope.postulate = function(){
+		  ideas.postulate(idea);
+		};
+		$scope.backToHome = function() {
+	  	history.back();
+		};	
+	}
+]);
+
+app.controller('PendingIdeasCtrl', [
+	'$scope',
+	'ideas',
+	'auth',
+	'$location',
+	function($scope, ideas, auth, $location){
+		$scope.orderProperty = '-creationDate';
+		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.ideas = ideas.pending_ideas;
 		$scope.home = function(){
 			ideas.home();
 		};	
 		$scope.backToHome = function() {
-	  		$location.path('/');
+
+	  	$location.path('/');
 		};
+		$scope.acceptIdea = function(idea){
+		  ideas.accept(idea).success(function(data) {
+		    $scope.ideas.pop(idea);
+		  });
+		};
+		$scope.rejectIdea = function(idea){
+		  ideas.reject(idea).success(function(data) {
+		    $scope.ideas.pop(idea);
+		  });
+		};	
 	}
 ]);
 
