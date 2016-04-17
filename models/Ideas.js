@@ -16,7 +16,6 @@ IdeaSchema.methods.postulateUser = function(user_id, callback){
 };
 
 IdeaSchema.methods.accept = function(user_id, callback){
-	this.postulant = user_id;
 	this.state = 'aceptada';
 	this.save(callback);
 };

@@ -46,7 +46,9 @@ router.get('/ideas/:idea', function(req, res) {
   });
 
 router.put('/ideas/:idea/postulate', auth, function(req, res, next) {
-  req.idea.postulateUser(auth.currentUser, function(err, idea){
+  idea = Idea.find(req.idea);
+  idea.postulant = req.payload.username;
+  req.idea.postulateUser(req.payload.username, function(err, idea){
     if (err) { return next(err); }
     res.json(idea);
   });
@@ -54,7 +56,6 @@ router.put('/ideas/:idea/postulate', auth, function(req, res, next) {
 
 router.put('/ideas/:idea/accept', auth, function(req, res, next) {
   idea = Idea.find(req.idea);
-  idea.postulant = req.payload.username;
   req.idea.accept(req.payload.username, function(err, idea){
     if (err) { return next(err); }
     res.json(idea);
@@ -63,7 +64,7 @@ router.put('/ideas/:idea/accept', auth, function(req, res, next) {
 
 router.put('/ideas/:idea/reject', auth, function(req, res, next) {
   idea = Idea.find(req.idea);
-  req.idea.reject(auth.currentUser, function(err, idea){
+  req.idea.reject(req.payload.username, function(err, idea){
     if (err) { return next(err); }
     res.json(idea);
   });

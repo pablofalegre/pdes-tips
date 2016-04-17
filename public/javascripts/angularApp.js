@@ -343,10 +343,14 @@ app.controller('PendingIdeasCtrl', [
 	  	$location.path('/');
 		};
 		$scope.acceptIdea = function(idea){
-		  ideas.accept(idea);
+		  ideas.accept(idea).success(function(data) {
+		    $scope.ideas.pop(idea);
+		  });
 		};
 		$scope.rejectIdea = function(idea){
-		  ideas.reject(idea);
+		  ideas.reject(idea).success(function(data) {
+		    $scope.ideas.pop(idea);
+		  });
 		};	
 	}
 ]);
