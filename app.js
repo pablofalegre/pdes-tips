@@ -20,6 +20,7 @@ require('./config/passport');
 mongoose.connect('mongodb://localhost/news');
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var activities = require('./routes/activities');
 
 var app = express();
 
@@ -50,19 +51,16 @@ var activityLog = function(req, res, next) {
     //despues se podria hacer algo para que un middeware deje un usuario siempre (un Anonimo si no estan logeados), y evitamos preguntar.
     if(res.statusCode == 200 && req.payload){
       
-      var activity = activitiesConf.find(req.route.path, req.method);
+      var activityOpt = activitiesConf.find(req.route.path, req.method);
 
-      console.log("activity ? = " + activity);
-
-      activity.map(function(act){
-        act.map(function(actFunc){
-          actFunc(req.payload.username).save(function(err, activity){
+      activityOpt.map(function(activity){
+        
+        activity(req.payload.username, req, res).save(function(err, activity){
           if(err){
             console.log('error saving ' + err);
             return next(err); 
           }
           console.log("saved activity = " + activity);
-          });
         });
         
       });

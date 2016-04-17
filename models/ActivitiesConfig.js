@@ -4,7 +4,7 @@ var Activity = mongoose.model('Activity');
 
 var activitiesConfig = {
   "/ideas" : {
-    GET : function(username){ 
+    GET : function(username, req, res){ 
       return new Activity({
         user : username,
             action : "visito",
@@ -13,11 +13,11 @@ var activitiesConfig = {
     }
   },
   "/ideas" : {
-  	POST : function(username){ 
+  	POST : function(username, req, res){ 
     	return new Activity({
         	user : username,
-            action : "subio",
-            target : "una idea"
+            action : "subio una idea",
+            target : req.body.title
       });
     } 
   }
@@ -26,15 +26,14 @@ var activitiesConfig = {
 
 activitiesConfig.find = function(url, method){
 
-	var optMethod = function(endpoint){
-		console.log("found method " + endpoint[method]);
-		return Optional.ofNullable(endpoint[method]);	
-	}
-
 	console.log('finding url ' + url + ', method = ' + method);
 
-	return Optional.ofNullable(this[url])
-		.map(optMethod);
+  if(this[url]){
+    return Optional.ofNullable(this[url][method])
+  } else {
+    return Optional.NONE;
+  }
+
 }
 
 
