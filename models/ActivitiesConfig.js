@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Optional = require('optional-js');
 var Activity = mongoose.model('Activity');
 
+//para cada url configuro un metodo y una actividad.
 var activitiesConfig = {
   "/ideas" : {
     GET : function(username, req, res){ 

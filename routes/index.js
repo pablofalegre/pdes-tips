@@ -6,6 +6,7 @@ var jwt = require('express-jwt');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 var Post = mongoose.model('Post');
+var Activity = mongoose.model('Activity');
 var Comment = mongoose.model('Comment');
 var Idea = mongoose.model('Idea');
 var User = mongoose.model('User');
@@ -19,13 +20,9 @@ router.get('/ideas', function(req, res, next) {
 });
 
 router.post('/ideas', auth, function(req, res, next) {
-  console.log("posting on idea");
-  var idea = new Idea(req.body);
   
-  console.log("idea = " + idea);
+  var idea = new Idea(req.body);
   idea.author = req.payload.username;
-
-  console.log("current user posting idea " + idea.author);
 
   idea.save(function(err, idea){
     if(err){ return next(err); }
@@ -46,19 +43,27 @@ router.param('idea', function(req, res, next, id) {
   });
 });
 
-router.get('/ideas/:idea', function(req, res) {  
-    res.json(idea);
+router.get('/ideas/:idea', function(req, res) { 
+    res.json(req.idea);
   });
 
 
 router.get('/activities', function(req, res, next) {
 
-  Activity.find({}).
-  sort({ creationDate: -1 }).
-  exec(function(err, posts){
-    if(err){ return next(err); }
+  var lastWeekDate = new Date(new Date().setDate(new Date().getDate()-7));
 
-    res.json(posts);
+  Activity.find({
+    creationDate : {
+      '$gte' : lastWeekDate
+    }
+  }).
+   sort({ creationDate: -1 }).
+   exec(function(err, acts){
+     if(err){ 
+         console.log("error finding activities");
+        return next(err); }
+
+        res.json(acts);
   });
 
   

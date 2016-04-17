@@ -12,7 +12,6 @@ require('./models/Comments');
 require('./models/Users');
 require('./models/Ideas');
 require('./models/Activities');
-var activitiesConf = require('./models/ActivitiesConfig');
 
 
 require('./config/passport');
@@ -39,8 +38,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 
 
-app.all('/*', activityLog);
 
+
+app.all('/*', activityLog);
 
 app.use('/', routes);
 app.use('/users', users);

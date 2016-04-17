@@ -42,7 +42,8 @@ app.config([
 			controller: 'ActivitiesCtrl',
 			resolve: {
 			    activitiesPromise: ['activities', function(activities) {
-			      return activities.home();
+			    	console.log('resolving');
+			    	return activities.recent();
 			    }]
 			}
 		})
@@ -129,9 +130,15 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
     });
   };
   	o.get = function(id) {
-	  return $http.get('/ideas/' + id).then(function(res){
-	    return res.data;
-	  });
+
+  		console.log('getting idea ');
+	  	return $http.get('/ideas/' + id).error(function(error){
+	      console.log('error gettign idea = ' + error);
+	      $scope.error = error;
+	    }).then(function(res){
+	  		console.log('tehn return');
+	    	return res.data;
+	  	});
 	};
 
   	o.create = function(idea) {
@@ -152,7 +159,11 @@ app.factory('activities', ['$http', 'auth', function($http, auth){
   };
 
   o.recent = function() {
-    return $http.get('/activities').success(function(data){
+  	console.log("calling recent");
+    return $http.get('/activities').error(function(error){
+	      console.log('error gettign activities = ' + error);
+	      $scope.error = error;
+	    }).success(function(data){
       angular.copy(data, o.activities);
     });
   };
@@ -311,6 +322,9 @@ app.controller('IdeasCtrl', [
 	'auth',
 	'$location',
 	function($scope, ideas, idea, auth, $location){
+
+		console.log('ideas ctrl');
+
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.idea = idea;
 		$scope.home = function(){
@@ -326,6 +340,8 @@ app.controller('ActivitiesCtrl', [
 	'$scope',
 	'activities',
 	function($scope, activities){
+		console.log('ctrl activities');
+		$scope.activities = activities.activities;
 		$scope.home = function(){
 			activities.recent();
 		};

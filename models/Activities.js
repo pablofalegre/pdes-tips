@@ -7,8 +7,10 @@ var ActivitySchema = new mongoose.Schema({
   creationDate: { type: Date, default: Date.now }
 });
 
-ActivitySchema.methods.print = function() {
-  return this.user.username + " " + this.action + " " + target;
+//no esta funcionando porque en la view llama al json y no a Activity
+ActivitySchema.methods.print = function(act) {
+  console.log("printing");
+  return this.user+ " " + this.action + " " + this.target;
 };
 
 mongoose.model('Activity', ActivitySchema);
