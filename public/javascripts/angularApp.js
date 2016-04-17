@@ -143,7 +143,6 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	  return $http.put('/ideas/'+ idea._id + '/postulate', null, {
 	    headers: {Authorization: 'Bearer '+auth.getToken()}
 	  }).success(function(data){
-	  	idea.postulant = auth.currentUser;
 	  	idea.state = 'en revision';
 	  });
 	};
@@ -334,8 +333,9 @@ app.controller('PendingIdeasCtrl', [
 	'auth',
 	'$location',
 	function($scope, ideas, auth, $location){
-		$scope.pending_ideas = ideas.pending_ideas
+		$scope.orderProperty = '-creationDate';
 		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.ideas = ideas.pending_ideas;
 		$scope.home = function(){
 			ideas.home();
 		};	

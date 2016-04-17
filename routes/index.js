@@ -54,10 +54,11 @@ router.put('/ideas/:idea/postulate', auth, function(req, res, next) {
 
 router.put('/ideas/:idea/accept', auth, function(req, res, next) {
   idea = Idea.find(req.idea);
-  req.idea.accept(auth.currentUser, function(err, idea){
+  idea.postulant = req.payload.username;
+  req.idea.accept(req.payload.username, function(err, idea){
     if (err) { return next(err); }
     res.json(idea);
-  });
+  });  
 });
 
 router.put('/ideas/:idea/reject', auth, function(req, res, next) {

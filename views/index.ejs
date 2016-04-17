@@ -67,7 +67,7 @@
       <div class="page-header">
         <h1>Ideas pendientes de revision</h1>
       </div>
-      <div ng-repeat="idea in pending_ideas | orderBy:orderProperty">        
+      <div ng-repeat="idea in ideas | orderBy:orderProperty">        
         <span style="font-size:20px; margin-left:10px;">
           <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>
         </span>
