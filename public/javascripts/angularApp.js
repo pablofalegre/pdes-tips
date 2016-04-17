@@ -1,4 +1,4 @@
-var app = angular.module('flapperNews', ['ui.router','angularMoment']);
+var app = angular.module('tpTips', ['ui.router','angularMoment']);
 
 app.config([
 	'$stateProvider',
@@ -11,8 +11,18 @@ app.config([
 	      templateUrl: '/home.html',
 	      controller: 'MainCtrl',
 	      resolve: {
-			    postPromise: ['posts', function(posts){
-			      return posts.getAll();
+			    ideaPromise: ['ideas', function(ideas){
+			      return ideas.getAll();
+			    }]
+			  }
+	    })
+	    .state('pending_ideas', {
+	      url: '/pending_ideas',
+	      templateUrl: '/pending_ideas.html',
+	      controller: 'PendingIdeasCtrl',
+	      resolve: {
+			    pendingIdeasPromise: ['ideas', function(ideas){
+			      return ideas.getPendingIdeas();
 			    }]
 			  }
 	    })
@@ -26,26 +36,36 @@ app.config([
 				    }]
 				  }
 			})
-			.state('login', {
-			  url: '/login',
-			  templateUrl: '/login.html',
-			  controller: 'AuthCtrl',
-			  onEnter: ['$state', 'auth', function($state, auth){
-			    if(auth.isLoggedIn()){
-			      $state.go('home');
-			    }
-			  }]
+	    .state('ideas', {
+			  url: '/ideas/{id}',
+			  templateUrl: '/ideas.html',
+			  controller: 'IdeasCtrl',
+				  resolve: {
+				    idea: ['$stateParams', 'ideas', function($stateParams, ideas) {
+				      return ideas.get($stateParams.id);
+				    }]
+				  }
 			})
-			.state('register', {
-			  url: '/register',
-			  templateUrl: '/register.html',
-			  controller: 'AuthCtrl',
-			  onEnter: ['$state', 'auth', function($state, auth){
-			    if(auth.isLoggedIn()){
-			      $state.go('home');
-			    }
-			  }]
-			});
+		.state('login', {
+		  url: '/login',
+		  templateUrl: '/login.html',
+		  controller: 'AuthCtrl',
+		  onEnter: ['$state', 'auth', function($state, auth){
+		    if(auth.isLoggedIn()){
+		      $state.go('home');
+		    }
+		  }]
+		})
+		.state('register', {
+		  url: '/register',
+		  templateUrl: '/register.html',
+		  controller: 'AuthCtrl',
+		  onEnter: ['$state', 'auth', function($state, auth){
+		    if(auth.isLoggedIn()){
+		      $state.go('home');
+		    }
+		  }]
+		});
 	  $urlRouterProvider.otherwise('home');
 	}
 ]);
@@ -54,11 +74,11 @@ app.factory('auth', ['$http', '$window', function($http, $window){
   var auth = {};
 
 	auth.saveToken = function (token){
-	  $window.localStorage['flapper-news-token'] = token;
+	  $window.localStorage['tp-tips-token'] = token;
 	};
 
 	auth.getToken = function (){
-	  return $window.localStorage['flapper-news-token'];
+	  return $window.localStorage['tp-tips-token'];
 	};
 	auth.isLoggedIn = function(){
 	  var token = auth.getToken();
@@ -90,10 +110,57 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 	  });
 	};
 	auth.logOut = function(){
-	  $window.localStorage.removeItem('flapper-news-token');
+	  $window.localStorage.removeItem('tp-tips-token');
 	};
 
   return auth;
+}]);
+
+app.factory('ideas', ['$http', 'auth', function($http, auth){
+  var o = {
+    ideas: [],
+    pending_ideas: []
+  };
+  o.home = function(){ 
+  	return $http.get('/');
+  };
+  o.getAll = function() {
+    return $http.get('/ideas').success(function(data){
+      angular.copy(data, o.ideas);
+    });
+  };
+  o.getPendingIdeas = function() {
+    return $http.get('/pending_ideas').success(function(data){
+      angular.copy(data, o.pending_ideas);
+    });
+  };
+  o.get = function(id) {
+	  return $http.get('/ideas/' + id).then(function(res){
+	    return res.data;
+	  });
+	};
+	o.postulate = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/postulate', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'en revision';
+	  });
+	};
+	o.accept = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/accept', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'aceptada';
+	  });
+	};	
+	o.reject = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/reject', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'rechazada';
+	  });
+	};		
+  return o;
 }]);
 
 app.factory('posts', ['$http', 'auth', function($http, auth){
@@ -186,31 +253,26 @@ app.controller('AuthCtrl', [
 
 app.controller('MainCtrl', [
 '$scope',
-'posts',
+'ideas',
 'auth',
-function($scope, posts, auth){
-	$scope.orderProperty = '-upvotes';
+function($scope, ideas, auth){
+	$scope.orderProperty = '-creationDate';
 	$scope.isLoggedIn = auth.isLoggedIn;
-	$scope.posts = posts.posts;
-	$scope.addPost = function(){
-		if(!$scope.title || $scope.title === '') { return; }
-	  posts.create({
-	    title: $scope.title,
-		link: $scope.link,
-		date: new Date(),
-	  });
-	  $scope.title = '';
-	  $scope.link = '';
+	$scope.currentUser = auth.currentUser;
+	$scope.ideas = ideas.ideas;	
+
+	$scope.acceptPostulant = function(idea) {
+		return idea.state==='disponible';
 	};
-	$scope.incrementUpvotes = function(post) {
-	  	posts.upvote(post);
-	};
-	$scope.incrementDownvotes = function(post) {
-	  	posts.downvote(post);
-	};
-	$scope.orderPostsBy = function(orderProperty){
-		$scope.orderProperty = orderProperty;
-	};
+	$scope.inReview = function(idea) {
+		return idea.state==='en revision';
+		};
+		$scope.wasAccepted = function(idea) {
+		return idea.state==='aceptada';
+		};
+		$scope.wasRejected = function(idea) {
+		return idea.state==='rechazada';
+		};
 }]);
 
 app.controller('PostsCtrl', [
@@ -240,6 +302,55 @@ app.controller('PostsCtrl', [
 
 		$scope.backToHome = function() {
 	  	$location.path('/');
+		};	
+	}
+]);
+
+app.controller('IdeasCtrl', [
+	'$scope',
+	'ideas',
+	'idea',
+	'auth',
+	'$location',
+	function($scope, ideas, idea, auth, $location){
+		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.idea = idea;
+		$scope.acceptPostulant = function() {
+		return idea.state==='disponible';
+		};
+		$scope.postulate = function(){
+		  ideas.postulate(idea);
+		};
+		$scope.backToHome = function() {
+	  	history.back();
+		};	
+	}
+]);
+
+app.controller('PendingIdeasCtrl', [
+	'$scope',
+	'ideas',
+	'auth',
+	'$location',
+	function($scope, ideas, auth, $location){
+		$scope.orderProperty = '-creationDate';
+		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.ideas = ideas.pending_ideas;
+		$scope.home = function(){
+			ideas.home();
+		};	
+		$scope.backToHome = function() {
+	  	$location.path('/');
+		};
+		$scope.acceptIdea = function(idea){
+		  ideas.accept(idea).success(function(data) {
+		    $scope.ideas.pop(idea);
+		  });
+		};
+		$scope.rejectIdea = function(idea){
+		  ideas.reject(idea).success(function(data) {
+		    $scope.ideas.pop(idea);
+		  });
 		};	
 	}
 ]);
