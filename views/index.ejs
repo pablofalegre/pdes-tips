@@ -31,6 +31,10 @@
         <h1>Ideas para TIPs</h1>
       </div>
       
+      <span style="font-size:20px; margin-left:10px;">
+          <a href="#/actividades.html">Actividades</a>
+      </span>
+
       <div ng-repeat="idea in ideas | orderBy:orderProperty">        
         <span style="font-size:20px; margin-left:10px;">
           <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>
@@ -72,6 +76,19 @@
         </h3>
       </div>
       <button type="submit" ng-click="backToHome()">Back to Home</button>
+    </script>
+
+    <script type="text/ng-template" id="/actividades.html">
+      <div class="page-header">
+        <h1>Últimas actividades</h1>
+      </div>
+      
+      <div ng-repeat="act in activities | orderBy:creationDate">        
+        <span style="font-size:20px; margin-left:10px;">
+          <h4>{{act.print}}</h4>
+        </span>
+        <span am-time-ago=act.creationDate></span>
+      </div>
     </script>
 
     <script type="text/ng-template" id="/posts.html">

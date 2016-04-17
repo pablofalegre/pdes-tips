@@ -51,6 +51,19 @@ router.get('/ideas/:idea', function(req, res) {
   });
 
 
+router.get('/activities', function(req, res, next) {
+
+  Activity.find({}).
+  sort({ creationDate: -1 }).
+  exec(function(err, posts){
+    if(err){ return next(err); }
+
+    res.json(posts);
+  });
+
+  
+});
+
 router.get('/posts', function(req, res, next) {
   Post.find(function(err, posts){
     if(err){ return next(err); }

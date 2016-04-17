@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 var ActivitySchema = new mongoose.Schema({
   user: String,
   action: String,
-  target: String
+  target: String,
+  creationDate: { type: Date, default: Date.now }
 });
 
 ActivitySchema.methods.print = function() {

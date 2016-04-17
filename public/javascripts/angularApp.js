@@ -36,6 +36,16 @@ app.config([
 				    }]
 				  }
 			})
+	    .state('activities', {
+			url: '/activities',
+			templateUrl: '/activities.html',
+			controller: 'ActivitiesCtrl',
+			resolve: {
+			    activitiesPromise: ['activities', function(activities) {
+			      return activities.home();
+			    }]
+			}
+		})
 		.state('login', {
 		  url: '/login',
 		  templateUrl: '/login.html',
@@ -132,6 +142,20 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	    	o.ideas.push(data);
 	  });
 	};
+
+  return o;
+}]);
+
+app.factory('activities', ['$http', 'auth', function($http, auth){
+  var o = {
+    activities: []
+  };
+
+  o.recent = function() {
+    return $http.get('/activities').success(function(data){
+      angular.copy(data, o.activities);
+    });
+  };
 
   return o;
 }]);
@@ -294,6 +318,16 @@ app.controller('IdeasCtrl', [
 		};	
 		$scope.backToHome = function() {
 	  		$location.path('/');
+		};
+	}
+]);
+
+app.controller('ActivitiesCtrl', [
+	'$scope',
+	'activities',
+	function($scope, activities){
+		$scope.home = function(){
+			activities.recent();
 		};
 	}
 ]);
