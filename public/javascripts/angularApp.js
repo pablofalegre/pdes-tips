@@ -179,7 +179,13 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	    	o.ideas.push(data);
 	  });
 	};
-
+	o.delete = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/delete', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'eliminada';
+	  });
+	};
   return o;
 }]);
 
@@ -198,60 +204,6 @@ app.factory('activities', ['$http', 'auth', function($http, auth){
       angular.copy(data, o.activities);
     });
   };
-  return o;
-}]);
-
-app.factory('posts', ['$http', 'auth', function($http, auth){
-  var o = {
-    posts: []
-  };
-  o.home = function(){ 
-  	return $http.get('/');
-  };
-  o.getAll = function() {
-    return $http.get('/posts').success(function(data){
-      angular.copy(data, o.posts);
-    });
-  };
-  o.create = function(post) {
-	  return $http.post('/posts', post, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    o.posts.push(data);
-	  });
-	};
-
-	o.upvote = function(post) {
-	  return $http.put('/posts/' + post._id + '/upvote', null, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    post.upvotes += 1;
-	  });
-	};
-	o.downvote = function(post) {
-	  return $http.put('/posts/' + post._id + '/downvote', null, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    post.downvotes += 1;
-	  });
-	};
-	o.get = function(id) {
-	  return $http.get('/posts/' + id).then(function(res){
-	    return res.data;
-	  });
-	};
-	o.addComment = function(id, comment) {
-	  return $http.post('/posts/' + id + '/comments', comment, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  });
-	};
-	o.upvoteComment = function(post, comment) {
-	  return $http.put('/comments/'+ comment._id + '/upvote', null, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    comment.upvotes += 1;
-	  });
-	};
   return o;
 }]);
 
@@ -299,6 +251,16 @@ app.controller('MainCtrl', [
 		$scope.currentUser = auth.currentUser;
 		$scope.ideas = ideas.ideas;	
 
+		$scope.addIdea = function(){
+			if(!$scope.title || $scope.title === '') { return; };
+	  		ideas.create({
+	  			title: $scope.title,
+	  			description: $scope.description,
+	  			state: "disponible" 
+				});
+				$scope.title  = '';
+				$scope.description = '';
+		};
 		$scope.acceptPostulant = function(idea) {
 			return idea.state==='disponible';
 		};
@@ -310,17 +272,7 @@ app.controller('MainCtrl', [
 			};
 		$scope.wasRejected = function(idea) {
 			return idea.state==='rechazada';
-		};		
-		$scope.addIdea = function(){
-			if(!$scope.title || $scope.title === '') { return; };
-	  		ideas.create({
-	  			title: $scope.title,
-	  			description: $scope.description,
-	  			state: "disponible" 
-				});
-				$scope.title  = '';
-				$scope.description = '';
-		};
+		};				
 }]);
 
 app.controller('PostsCtrl', [
@@ -367,14 +319,20 @@ app.controller('IdeasCtrl', [
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.idea = idea;
 		$scope.acceptPostulant = function() {
-		return idea.state==='disponible';
+			return idea.state==='disponible';
 		};
 		$scope.postulate = function(){
 		  ideas.postulate(idea);
 		};
 		$scope.backToHome = function() {
 	  	history.back();
-		};	
+		};
+		$scope.canDelete = function() {
+			return idea.state==='disponible' && idea.author === auth.currentUser();
+		};
+		$scope.delete = function() {
+			ideas.delete(idea);
+		};
 	}
 ]);
 
