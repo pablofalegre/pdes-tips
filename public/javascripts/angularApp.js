@@ -269,16 +269,14 @@ app.controller('MainCtrl', [
 		$scope.ideas = ideas.ideas;	
 
 		$scope.addIdea = function(){
-			console.log("agregando idea");
 
 			if(!$scope.title || $scope.title === '') { return; };
 			
 	  		ideas.create({
 	  			title: $scope.title,
 	  			description: $scope.description,
-	  			state: "AVAILABLE" 
+	  			state: "disponible" 
   			});
-  			console.log("idea creada");
   			$scope.title  = '';
   			$scope.description = '';
 		};
