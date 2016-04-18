@@ -53,11 +53,8 @@ router.param('idea', function(req, res, next, id) {
 });
 
 router.get('/ideas/:idea', function(req, res, next) {  
-    req.idea.populate('postulant', function(err, idea) {
-      if (err) { return next(err); }
-      res.json(idea);
-    });
-  });
+  res.json(req.idea);  
+});
 
 router.put('/ideas/:idea/postulate', auth, function(req, res, next) {
   idea = Idea.find(req.idea);
