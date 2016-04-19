@@ -26,5 +26,10 @@ IdeaSchema.methods.reject = function(user_id, callback){
 	this.save(callback);
 };
 
+IdeaSchema.methods.delete = function(user_id, callback){
+	this.state = 'eliminada';
+	this.save(callback);
+};
+
 mongoose.model('Idea', IdeaSchema);
 

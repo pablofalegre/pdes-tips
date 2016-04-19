@@ -180,6 +180,13 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	    	o.ideas.push(data);
 	  });
 	};
+	o.delete = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/delete', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'eliminada';
+	  });
+	};
 
   return o;
 }]);
@@ -229,13 +236,7 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
 	    	o.ideas.push(data);
 	  });
 	};
-	o.delete = function(idea) {
-	  return $http.put('/ideas/'+ idea._id + '/delete', null, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	  	idea.state = 'eliminada';
-	  });
-	};
+	
   return o;
 }]);
 
@@ -323,8 +324,9 @@ app.controller('MainCtrl', [
 				});
 				$scope.title  = '';
 				$scope.description = '';
+		}
 
-		};				
+
 }]);
 
 app.controller('PostsCtrl', [

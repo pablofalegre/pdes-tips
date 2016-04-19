@@ -53,11 +53,8 @@ router.param('idea', function(req, res, next, id) {
 });
 
 router.get('/ideas/:idea', function(req, res, next) {  
-    req.idea.populate('postulant', function(err, idea) {
-      if (err) { return next(err); }
-      res.json(idea);
-    });
-  });
+  res.json(req.idea);  
+});
 
 router.put('/ideas/:idea/postulate', auth, function(req, res, next) {
   idea = Idea.find(req.idea);
@@ -84,14 +81,12 @@ router.put('/ideas/:idea/reject', auth, function(req, res, next) {
   });
 });
 
-router.put('/posts/:post/upvote', auth, function(req, res, next) {
-  req.post.upvote(function(err, post){
+router.put('/ideas/:idea/delete', auth, function(req, res, next) {
+  req.idea.delete(req.payload.username, function(err, idea){
     if (err) { return next(err); }
-
-    res.json(post);
+    res.json(idea);
   });
 });
-
 
 router.get('/activities', function(req, res, next) {
 
@@ -114,24 +109,7 @@ router.get('/activities', function(req, res, next) {
   
 });
 
-router.get('/posts', function(req, res, next) {
-  Post.find(function(err, posts){
-    if(err){ return next(err); }
 
-    res.json(posts);
-  });
-});
-
-router.post('/posts', auth, function(req, res, next) {
-  var post = new Post(req.body);
-  post.author = req.payload.username;
-
-  post.save(function(err, post){
-    if(err){ return next(err); }
-
-    res.json(post);
-  });
-});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {  
