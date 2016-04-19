@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>Flapper News</title>
-    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
     <script src="/javascripts/angularApp.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
@@ -85,9 +85,8 @@
           {{idea.description}}
         </p>
       <div ng-show="isLoggedIn()">
-          <button ng-show="acceptPostulant()" class="btn-primary" ng-click="postulate()">Postularme</button>
-          <br/>
-          <button ng-show="canDelete()" class="btn-primary" ng-click="delete()">Eliminar</button>
+        <span><button ng-show="acceptPostulant()" class="btn btn-info" ng-click="postulate()">Postularme</button>
+          <button ng-show="canDelete()" class="btn btn-danger" ng-click="delete()">Eliminar</button></span>
       </div>  
       <button type="submit" ng-click="backToHome()">Volver</button>
     </script>
@@ -105,8 +104,8 @@
         </span>
         <span am-time-ago=idea.creationDate></span>
         <span ng-show="isLoggedIn()">
-          <button class="btn-success" ng-click="acceptIdea(idea)">Aceptar idea</button>
-          <button class="btn-danger" ng-click="rejectIdea(idea)">Rechazar idea</button>
+          <button class="btn btn-success" ng-click="acceptIdea(idea)">Aceptar idea</button>
+          <button class="btn btn-danger" ng-click="rejectIdea(idea)">Rechazar idea</button>
         </span>      
       </div>
       <button type="submit" ng-click="backToHome()">Volver</button>      

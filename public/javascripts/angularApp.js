@@ -157,11 +157,13 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	  	idea.state = 'en revision';
 	  });
 	};
-	o.accept = function(idea) {
-	  return $http.put('/ideas/'+ idea._id + '/accept', null, {
+    var authHeader = {
 	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	  	idea.state = 'aceptada';
+	}
+
+	o.accept = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/accept', null, authHeader).success(function(data){
+	  	idea = data;
 	  });
 	};	
 	o.reject = function(idea) {

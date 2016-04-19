@@ -11,6 +11,18 @@ var Comment = mongoose.model('Comment');
 var Idea = mongoose.model('Idea');
 var User = mongoose.model('User');
 
+
+function requestCallback(res, next) {
+  return function(err, idea){
+    if (err) { return next(err); }
+    res.json(idea);
+  }
+}
+
+function transitionIdeaState(req, res, next, stateMethodName) {
+  req.idea[stateMethodName](req.payload.username, requestCallback(res, next));
+}
+
 router.get('/ideas', function(req, res, next) {
   Idea.find({ 'state': {'$ne': 'eliminada'} }, function(err, ideas){
     if(err){ return next(err); }
@@ -20,7 +32,6 @@ router.get('/ideas', function(req, res, next) {
 });
 
 router.post('/ideas', auth, function(req, res, next) {
-  
   var idea = new Idea(req.body);
   idea.author = req.payload.username;
 
@@ -57,40 +68,24 @@ router.get('/ideas/:idea', function(req, res, next) {
 });
 
 router.put('/ideas/:idea/postulate', auth, function(req, res, next) {
-  idea = Idea.find(req.idea);
-  idea.postulant = req.payload.username;
-  req.idea.postulateUser(req.payload.username, function(err, idea){
-    if (err) { return next(err); }
-    res.json(idea);
-  });
+  req.idea.postulateUser(req.payload.username, requestCallback(res, next));
 });
 
 router.put('/ideas/:idea/accept', auth, function(req, res, next) {
-  idea = Idea.find(req.idea);
-  req.idea.accept(req.payload.username, function(err, idea){
-    if (err) { return next(err); }
-    res.json(idea);
-  });  
+  req.idea.accept(req.payload.username, requestCallback(res, next));  
 });
 
 router.put('/ideas/:idea/reject', auth, function(req, res, next) {
-  idea = Idea.find(req.idea);
-  req.idea.reject(req.payload.username, function(err, idea){
-    if (err) { return next(err); }
-    res.json(idea);
-  });
+  transitionIdeaState(req, res, next, "reject")
 });
 
 router.put('/ideas/:idea/delete', auth, function(req, res, next) {
-  req.idea.delete(req.payload.username, function(err, idea){
-    if (err) { return next(err); }
-    res.json(idea);
-  });
+  req.idea.delete(req.payload.username, requestCallback(res, next));
 });
 
 router.get('/activities', function(req, res, next) {
-
-  var lastWeekDate = new Date(new Date().setDate(new Date().getDate()-7));
+  var lastWeekDate = new Date()
+  lastWeekDate.setDate(new Date().getDate()-7)
 
   Activity.find({
     creationDate : {
@@ -101,9 +96,9 @@ router.get('/activities', function(req, res, next) {
    exec(function(err, acts){
      if(err){ 
          console.log("error finding activities");
-        return next(err); }
-
-        res.json(acts);
+        return next(err);
+     }
+     res.json(acts);
   });
 
   
