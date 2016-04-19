@@ -20,7 +20,7 @@ var activitiesConfig = {
   },
   "/ideas/:idea/postulate" : {
     PUT : function(username, req, res){
-      return createActivity(username, req, res, "se postulo en", req.body.title) 
+      return createActivity(username, req, res, "se postulo en", req.idea.title) 
     }
   },
   '/ideas/:idea/delete' : {
@@ -30,7 +30,12 @@ var activitiesConfig = {
   },
   '/ideas/:idea/reject' : {
     PUT : function(username, req, res){
-      return createActivity(username, req, res, "rechazo una idea", req.idea.title)
+      return createActivity(username, req, res, "rechazo la idea", req.idea.title)
+    }
+  },
+  '/ideas/:idea/accept' : {
+    PUT : function(username, req, res){
+      return createActivity(username, req, res, "acepto la idea", req.idea.title)
     }
   }
 }
