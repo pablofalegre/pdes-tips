@@ -27,3 +27,4 @@ IdeaSchema.methods.reject = function(user_id, callback){
 };
 
 mongoose.model('Idea', IdeaSchema);
+
