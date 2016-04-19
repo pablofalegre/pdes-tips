@@ -187,6 +187,56 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	  	idea.state = 'eliminada';
 	  });
 	};
+
+  return o;
+}]);
+
+
+app.factory('activities', ['$http', 'auth', function($http, auth){
+  var o = {
+    activities: []
+  };
+
+  o.recent = function() {
+  	console.log("calling recent");
+    return $http.get('/activities').error(function(error){
+	      console.log('error gettign activities = ' + error);
+	      $scope.error = error;
+	    }).success(function(data){
+      angular.copy(data, o.activities);
+    });
+  };
+  return o;
+}]);
+
+app.factory('posts', ['$http', 'auth', function($http, auth){
+  var o = {
+    posts: []
+  };
+  o.home = function(){ 
+  	return $http.get('/');
+  };
+  o.getAll = function() {
+    return $http.get('/posts').success(function(data){
+      angular.copy(data, o.posts);
+    });
+  };
+  o.create = function(post) {
+	  return $http.post('/posts', post, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	    o.posts.push(data);
+	  });
+	};
+
+	o.upvote = function(post) {
+	  return $http.put('/posts/' + post._id + '/upvote', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	    	o.ideas.push(data);
+	  });
+	};
+	
   return o;
 }]);
 
@@ -252,6 +302,19 @@ app.controller('MainCtrl', [
 		$scope.currentUser = auth.currentUser;
 		$scope.ideas = ideas.ideas;	
 
+		$scope.acceptPostulant = function(idea) {
+			return idea.state==='disponible';
+		};
+		$scope.inReview = function(idea) {
+			return idea.state==='en revision';
+			};
+		$scope.wasAccepted = function(idea) {
+			return idea.state==='aceptada';
+			};
+		$scope.wasRejected = function(idea) {
+			return idea.state==='rechazada';
+		};		
+
 		$scope.addIdea = function(){
 			if(!$scope.title || $scope.title === '') { return; };
 	  		ideas.create({
@@ -261,20 +324,8 @@ app.controller('MainCtrl', [
 				});
 				$scope.title  = '';
 				$scope.description = '';
+		}
 
-		};
-		$scope.acceptPostulant = function(idea) {
-			return idea.state==='disponible';
-		};
-		$scope.inReview = function(idea) {
-			return idea.state==='en revision';
-		};
-		$scope.wasAccepted = function(idea) {
-			return idea.state==='aceptada';
-		};
-		$scope.wasRejected = function(idea) {
-			return idea.state==='rechazada';
-		};				
 
 }]);
 
