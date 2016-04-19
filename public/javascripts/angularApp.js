@@ -311,9 +311,6 @@ app.controller('MainCtrl', [
 		$scope.wasAccepted = function(idea) {
 			return idea.state==='aceptada';
 			};
-		$scope.wasRejected = function(idea) {
-			return idea.state==='rechazada';
-		};		
 
 		$scope.addIdea = function(){
 			if(!$scope.title || $scope.title === '') { return; };
