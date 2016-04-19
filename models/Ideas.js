@@ -21,7 +21,8 @@ IdeaSchema.methods.accept = function(user_id, callback){
 };
 
 IdeaSchema.methods.reject = function(user_id, callback){
-	this.state = 'rechazada';
+	this.state = 'disponible';
+	this.postulant = undefined;
 	this.save(callback);
 };
 

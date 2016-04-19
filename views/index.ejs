@@ -31,19 +31,45 @@
         <h1>Ideas para TIPs</h1>
       </div>
       
+      <span style="font-size:20px; margin-left:10px;">
+          <a href="#/activities">Actividades</a>
+      </span>
+
+
       <a href="#/pending_ideas">Ver Tareas Pendientes</a>
+
       <div ng-repeat="idea in ideas | orderBy:orderProperty">        
         <span style="font-size:20px; margin-left:10px;">
           <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>
         </span>
         <span>
-          propuesta por <a>{{idea.author.username}}</a>
+          propuesta por <a>{{idea.author}}</a>
         </span>
-        <span am-time-ago=idea.creationDate></span>      
+
+        <span am-time-ago=idea.creationDate></span>
         <label ng-show="acceptPostulant(idea)" class="label label-primary">Disponible</label>
         <label ng-show="inReview(idea)" class="label label-info">En Revision</label>
         <label ng-show="wasAccepted(idea)" class="label label-success">Aceptada</label>
-        <label ng-show="wasRejected(idea)" class="label label-danger">Rechazada</label>        
+      </div>
+      <form ng-submit="addIdea()" ng-show="isLoggedIn()" style="margin-top:30px;">
+        <h3>Agregar nueva idea </h3>
+
+        <div class="form-group">
+          <input type="text"
+            class="form-control"
+            placeholder="Título"
+            ng-model="title"></input>
+        </div>
+        <div class="form-group">
+          <input type="text"
+          class="form-control"
+          placeholder="Descripción"
+          ng-model="description"></input>
+        </div>
+        <button type="submit" class="btn btn-primary">Agregar</button>
+      </form>
+      <div ng-hide="isLoggedIn()">
+        <h3>Te tenes que <a href="/#/login">Logear</a> o <a href="/#/register">Registrarte</a> antes de agregar una idea.</h3>
       </div>
     </script>
 
@@ -52,13 +78,15 @@
         <h3>
           {{idea.title}}          
         </h3>
-        propuesta por <a>{{idea.authorName()}}</a>
+        propuesta por <a>{{idea.author}}</a>
       </div>
         <p>
           {{idea.description}}
         </p>
       <div ng-show="isLoggedIn()">
           <button ng-show="acceptPostulant()" class="btn-primary" ng-click="postulate()">Postularme</button>
+          <br/>
+          <button ng-show="canDelete()" class="btn-primary" ng-click="delete()">Eliminar</button>
       </div>  
       <button type="submit" ng-click="backToHome()">Volver</button>
     </script>
@@ -72,7 +100,7 @@
           <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>
         </span>
         <span>
-          propuesta por <a>{{idea.author.username}}</a>
+          propuesta por <a>{{idea.author}}</a>
         </span>
         <span am-time-ago=idea.creationDate></span>
         <span ng-show="isLoggedIn()">
@@ -86,42 +114,17 @@
       </div>
     </script>
 
-    <script type="text/ng-template" id="/posts.html">
+    <script type="text/ng-template" id="/activities.html">
       <div class="page-header">
-        <h3>
-          <a ng-show="post.link" href="{{post.link}}">
-            {{post.title}}
-          </a>
-          <span ng-hide="post.link">
-            {{post.title}}
-          </span>
-        </h3>
+        <h1>Últimas actividades</h1>
       </div>
-
-      <div ng-repeat="comment in post.comments | orderBy:'-upvotes'">
-        <span class="glyphicon glyphicon-thumbs-up"
-          ng-click="incrementUpvotes(comment)"></span>
-        {{comment.upvotes}} - by {{comment.author}}
+      
+      <div ng-repeat="act in activities | orderBy:'-creationDate'">        
         <span style="font-size:20px; margin-left:10px;">
-          {{comment.body}}
+          <h4><b>{{act.user}}</b> {{act.action}}: "{{act.target}}"</h4>
         </span>
+        <span am-time-ago=act.creationDate></span>
       </div>
-
-      <form ng-submit="addComment()" ng-show="isLoggedIn()" style="margin-top:30px;">
-        <h3>Add a new comment</h3>
-
-        <div class="form-group">
-          <input type="text"
-          class="form-control"
-          placeholder="Comment"
-          ng-model="body"></input>
-        </div>
-        <button type="submit" class="btn btn-primary">Comment</button>
-      </form>
-      <div ng-hide="isLoggedIn()">
-        <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a comment.</h3>
-      </div>
-      <button type="submit" ng-click="backToHome()">Back to Home</button>
     </script>
 
     <script type="text/ng-template" id="/register.html">

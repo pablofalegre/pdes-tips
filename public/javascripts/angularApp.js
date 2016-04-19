@@ -46,6 +46,17 @@ app.config([
 				    }]
 				  }
 			})
+	    .state('activities', {
+			url: '/activities',
+			templateUrl: '/activities.html',
+			controller: 'ActivitiesCtrl',
+			resolve: {
+			    activitiesPromise: ['activities', function(activities) {
+			    	console.log('resolving');
+			    	return activities.recent();
+			    }]
+			}
+		})
 		.state('login', {
 		  url: '/login',
 		  templateUrl: '/login.html',
@@ -157,63 +168,43 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	  return $http.put('/ideas/'+ idea._id + '/reject', null, {
 	    headers: {Authorization: 'Bearer '+auth.getToken()}
 	  }).success(function(data){
-	  	idea.state = 'rechazada';
+	  	idea.state = 'disponible';
+	  	idea.postulant = undefined;
 	  });
 	};		
+	o.create = function(idea) {
+  		console.log("creating idea " + idea);
+	  return $http.post('/ideas', idea, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	    	o.ideas.push(data);
+	  });
+	};
+	o.delete = function(idea) {
+	  return $http.put('/ideas/'+ idea._id + '/delete', null, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	  	idea.state = 'eliminada';
+	  });
+	};
   return o;
 }]);
 
-app.factory('posts', ['$http', 'auth', function($http, auth){
+
+app.factory('activities', ['$http', 'auth', function($http, auth){
   var o = {
-    posts: []
+    activities: []
   };
-  o.home = function(){ 
-  	return $http.get('/');
-  };
-  o.getAll = function() {
-    return $http.get('/posts').success(function(data){
-      angular.copy(data, o.posts);
+
+  o.recent = function() {
+  	console.log("calling recent");
+    return $http.get('/activities').error(function(error){
+	      console.log('error gettign activities = ' + error);
+	      $scope.error = error;
+	    }).success(function(data){
+      angular.copy(data, o.activities);
     });
   };
-  o.create = function(post) {
-	  return $http.post('/posts', post, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    o.posts.push(data);
-	  });
-	};
-
-	o.upvote = function(post) {
-	  return $http.put('/posts/' + post._id + '/upvote', null, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    post.upvotes += 1;
-	  });
-	};
-	o.downvote = function(post) {
-	  return $http.put('/posts/' + post._id + '/downvote', null, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    post.downvotes += 1;
-	  });
-	};
-	o.get = function(id) {
-	  return $http.get('/posts/' + id).then(function(res){
-	    return res.data;
-	  });
-	};
-	o.addComment = function(id, comment) {
-	  return $http.post('/posts/' + id + '/comments', comment, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  });
-	};
-	o.upvoteComment = function(post, comment) {
-	  return $http.put('/comments/'+ comment._id + '/upvote', null, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    comment.upvotes += 1;
-	  });
-	};
   return o;
 }]);
 
@@ -252,27 +243,34 @@ app.controller('AuthCtrl', [
 }]);
 
 app.controller('MainCtrl', [
-'$scope',
-'ideas',
-'auth',
-function($scope, ideas, auth){
-	$scope.orderProperty = '-creationDate';
-	$scope.isLoggedIn = auth.isLoggedIn;
-	$scope.currentUser = auth.currentUser;
-	$scope.ideas = ideas.ideas;	
+	'$scope',
+	'ideas',
+	'auth',
+	function($scope, ideas, auth){
+		$scope.orderProperty = '-creationDate';
+		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.currentUser = auth.currentUser;
+		$scope.ideas = ideas.ideas;	
 
-	$scope.acceptPostulant = function(idea) {
-		return idea.state==='disponible';
-	};
-	$scope.inReview = function(idea) {
-		return idea.state==='en revision';
+		$scope.addIdea = function(){
+			if(!$scope.title || $scope.title === '') { return; };
+	  		ideas.create({
+	  			title: $scope.title,
+	  			description: $scope.description,
+	  			state: "disponible" 
+				});
+				$scope.title  = '';
+				$scope.description = '';
 		};
+		$scope.acceptPostulant = function(idea) {
+			return idea.state==='disponible';
+		};
+		$scope.inReview = function(idea) {
+			return idea.state==='en revision';
+			};
 		$scope.wasAccepted = function(idea) {
-		return idea.state==='aceptada';
-		};
-		$scope.wasRejected = function(idea) {
-		return idea.state==='rechazada';
-		};
+			return idea.state==='aceptada';
+			};				
 }]);
 
 app.controller('PostsCtrl', [
@@ -313,17 +311,26 @@ app.controller('IdeasCtrl', [
 	'auth',
 	'$location',
 	function($scope, ideas, idea, auth, $location){
+
+		console.log('ideas ctrl');
+
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.idea = idea;
 		$scope.acceptPostulant = function() {
-		return idea.state==='disponible';
+			return idea.state==='disponible';
 		};
 		$scope.postulate = function(){
 		  ideas.postulate(idea);
 		};
 		$scope.backToHome = function() {
 	  	history.back();
-		};	
+		};
+		$scope.canDelete = function() {
+			return idea.state==='disponible' && idea.author === auth.currentUser();
+		};
+		$scope.delete = function() {
+			ideas.delete(idea);
+		};
 	}
 ]);
 
@@ -340,17 +347,32 @@ app.controller('PendingIdeasCtrl', [
 			ideas.home();
 		};	
 		$scope.backToHome = function() {
+
 	  	$location.path('/');
 		};
 		$scope.acceptIdea = function(idea){
 		  ideas.accept(idea).success(function(data) {
-		    $scope.ideas.pop(idea);
+		    var index = $scope.ideas.indexOf(idea);
+  			$scope.ideas.splice(index, 1); 
 		  });
 		};
 		$scope.rejectIdea = function(idea){
 		  ideas.reject(idea).success(function(data) {
-		    $scope.ideas.pop(idea);
+		    var index = $scope.ideas.indexOf(idea);
+  			$scope.ideas.splice(index, 1); 
 		  });
 		};	
+	}
+]);
+
+app.controller('ActivitiesCtrl', [
+	'$scope',
+	'activities',
+	function($scope, activities){
+		console.log('ctrl activities');
+		$scope.activities = activities.activities;
+		$scope.home = function(){
+			activities.recent();
+		};
 	}
 ]);
