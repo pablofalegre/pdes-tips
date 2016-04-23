@@ -42,8 +42,12 @@ app.use(passport.initialize());
 
 app.all('/*', activityLog);
 
+var ideasRouter = require('./routes/ideas');
+
+
 app.use('/', routes);
 app.use('/users', users);
+app.use('/ideas', ideasRouter);
 
 
 // catch 404 and forward to error handler

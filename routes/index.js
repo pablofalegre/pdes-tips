@@ -8,40 +8,8 @@ var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 var Post = mongoose.model('Post');
 var Activity = mongoose.model('Activity');
 var Comment = mongoose.model('Comment');
-var Idea = mongoose.model('Idea');
 var User = mongoose.model('User');
-
-
-function requestCallback(res, next) {
-  return function(err, idea){
-    if (err) { return next(err); }
-    res.json(idea);
-  }
-}
-
-function transitionIdeaState(req, res, next, stateMethodName) {
-  req.idea[stateMethodName](req.payload.username, requestCallback(res, next));
-}
-
-router.get('/ideas', function(req, res, next) {
-  Idea.find({ 'state': {'$ne': 'eliminada'} }, function(err, ideas){
-    if(err){ return next(err); }
-
-    res.json(ideas);
-  });
-});
-
-router.post('/ideas', auth, function(req, res, next) {
-  var idea = new Idea(req.body);
-  idea.author = req.payload.username;
-
-  idea.save(function(err, idea){
-    if(err){ return next(err); }
-
-    res.json(idea);
-  });
-});
-
+var Idea = mongoose.model('Idea');
 
 router.get('/pending_ideas', function(req, res, next) {
   Idea.find({ 'state': 'en revision' }, function(err, pending_ideas){
@@ -49,38 +17,6 @@ router.get('/pending_ideas', function(req, res, next) {
 
     res.json(pending_ideas);
   });
-});
-
-router.param('idea', function(req, res, next, id) {
-  var query = Idea.findById(id);
-
-  query.exec(function (err, idea){
-    if (err) { return next(err); }
-    if (!idea) { return next(new Error('can\'t find idea')); }
-
-    req.idea = idea;
-    return next();
-  });
-});
-
-router.get('/ideas/:idea', function(req, res, next) {  
-  res.json(req.idea);  
-});
-
-router.put('/ideas/:idea/postulate', auth, function(req, res, next) {
-  req.idea.postulateUser(req.payload.username, requestCallback(res, next));
-});
-
-router.put('/ideas/:idea/accept', auth, function(req, res, next) {
-  req.idea.accept(req.payload.username, requestCallback(res, next));  
-});
-
-router.put('/ideas/:idea/reject', auth, function(req, res, next) {
-  transitionIdeaState(req, res, next, "reject")
-});
-
-router.put('/ideas/:idea/delete', auth, function(req, res, next) {
-  req.idea.delete(req.payload.username, requestCallback(res, next));
 });
 
 router.get('/activities', function(req, res, next) {
@@ -109,79 +45,6 @@ router.get('/activities', function(req, res, next) {
 /* GET home page. */
 router.get('/', function(req, res, next) {  
   res.render('index', { title: 'Express' });
-});
-
-router.param('post', function(req, res, next, id) {
-  var query = Post.findById(id);
-
-  query.exec(function (err, post){
-    if (err) { return next(err); }
-    if (!post) { return next(new Error('can\'t find post')); }
-
-    req.post = post;
-    return next();
-  });
-});
-
-router.get('/posts/:post', function(req, res) {
-  req.post.populate('comments', function(err, post) {
-    if (err) { return next(err); }
-
-    res.json(post);
-  });
-});
-
-router.put('/posts/:post/upvote', auth, function(req, res, next) {
-  req.post.upvote(function(err, post){
-    if (err) { return next(err); }
-
-    res.json(post);
-  });
-});
-
-router.put('/posts/:post/downvote', auth, function(req, res, next) {
-  req.post.downvote(function(err, post){
-    if (err) { return next(err); }
-
-    res.json(post);
-  });
-});
-
-router.post('/posts/:post/comments', auth, function(req, res, next) {
-  var comment = new Comment(req.body);
-  comment.post = req.post;
-  comment.author = req.payload.username;
-
-  comment.save(function(err, comment){
-    if(err){ return next(err); }
-
-    req.post.comments.push(comment);
-    req.post.save(function(err, post) {
-      if(err){ return next(err); }
-
-      res.json(comment);
-    });
-  });
-});
-
-router.param('comment', function(req, res, next, id) {
-  var query = Comment.findById(id);
-
-  query.exec(function (err, comment){
-    if (err) { return next(err); }
-    if (!comment) { return next(new Error('can\'t find comment')); }
-
-    req.comment = comment;
-    return next();
-  });
-});
-
-router.put('/comments/:comment/upvote', auth, function(req, res, next) {
-  req.comment.upvote(function(err, post){
-    if (err) { return next(err); }
-
-    res.json(post);
-  });
 });
 
 router.post('/register', function(req, res, next){
