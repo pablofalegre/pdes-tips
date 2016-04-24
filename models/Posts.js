@@ -20,7 +20,7 @@ PostSchema.methods.downvote = function(cb) {
 };
 
 PostSchema.methods.reputation = function(cb) {
-  return this.upvotes - this.downvotes
+  return this.upvotes - this.downvotes;
 };
 
 mongoose.model('Post', PostSchema);
