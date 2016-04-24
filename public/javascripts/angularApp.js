@@ -25,17 +25,7 @@ app.config([
 			      return ideas.getPendingIdeas();
 			    }]
 			  }
-	    })
-	    .state('posts', {
-			  url: '/posts/{id}',
-			  templateUrl: '/posts.html',
-			  controller: 'PostsCtrl',
-				  resolve: {
-				    post: ['$stateParams', 'posts', function($stateParams, posts) {
-				      return posts.get($stateParams.id);
-				    }]
-				  }
-			})
+	    })	    
 	    .state('ideas', {
 			  url: '/ideas/{id}',
 			  templateUrl: '/ideas.html',
@@ -211,38 +201,6 @@ app.factory('activities', ['$http', 'auth', function($http, auth){
   return o;
 }]);
 
-app.factory('posts', ['$http', 'auth', function($http, auth){
-  var o = {
-    posts: []
-  };
-  o.home = function(){ 
-  	return $http.get('/');
-  };
-  o.getAll = function() {
-    return $http.get('/posts').success(function(data){
-      angular.copy(data, o.posts);
-    });
-  };
-  o.create = function(post) {
-	  return $http.post('/posts', post, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    o.posts.push(data);
-	  });
-	};
-
-	o.upvote = function(post) {
-	  return $http.put('/posts/' + post._id + '/upvote', null, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    	o.ideas.push(data);
-	  });
-	};
-	
-  return o;
-}]);
-
-
 app.factory('activities', ['$http', 'auth', function($http, auth){
   var o = {
     activities: []
@@ -327,37 +285,6 @@ app.controller('MainCtrl', [
 
 
 }]);
-
-app.controller('PostsCtrl', [
-	'$scope',
-	'posts',
-	'post',
-	'auth',
-	'$location',
-	function($scope, posts, post, auth, $location){
-		$scope.isLoggedIn = auth.isLoggedIn;
-	  $scope.post = post;
-	  $scope.home = function(){
-			posts.home();
-		};
-		$scope.addComment = function(){
-		  if(!$scope.body || $scope.body === '') { return; }
-		  posts.addComment(post._id, {
-		    body: $scope.body
-		  }).success(function(comment) {
-		    $scope.post.comments.push(comment);
-		  });
-		  $scope.body = '';
-		};
-		$scope.incrementUpvotes = function(comment) {
-	  	posts.upvoteComment(post, comment);
-		};
-
-		$scope.backToHome = function() {
-	  	$location.path('/');
-		};	
-	}
-]);
 
 app.controller('IdeasCtrl', [
 	'$scope',
