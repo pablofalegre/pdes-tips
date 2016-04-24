@@ -1,32 +1,28 @@
+var express = require('express');
+var router = express.Router();
 var mongoose = require('mongoose');
 var Activity = mongoose.model('Activity');
-var activitiesConf = require('../models/ActivitiesConfig');
 
+router.get('/', function(req, res, next) {
+  var lastWeekDate = new Date()
+  lastWeekDate.setDate(new Date().getDate()-7)
 
-//Middleware para creacion de eventos.
-var activityLog = function(req, res, next) {
+  Activity.find({
+    creationDate : {
+      '$gte' : lastWeekDate
+    }
+  }).
+   sort({ creationDate: -1 }).
+   exec(function(err, acts){
+     if(err){ 
+         console.log("error finding activities");
+        return next(err);
+     }
+     res.json(acts);
+  });
 
-  res.on('finish', function(){
+  
+});
 
-    //despues se podria hacer algo para que un middeware deje un usuario siempre (un Anonimo si no estan logeados), y evitamos preguntar.
-    if(res.statusCode == 200 && req.payload){
-      
-      var activityOpt = activitiesConf.find(req.route.path, req.method);
+module.exports = router;
 
-      activityOpt.map(function(activity){
-        
-        activity(req.payload.username, req, res).save(function(err, activity){
-          if(err){
-            console.log('error saving ' + err);
-            return next(err); 
-          }
-          console.log("saved activity = " + activity);
-        });
-        
-      });
-    }   
-  });  
-  next();
-};
-
-module.exports = activityLog;

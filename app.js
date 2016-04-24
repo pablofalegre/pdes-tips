@@ -19,7 +19,11 @@ require('./config/passport');
 mongoose.connect('mongodb://localhost/news');
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var activityLog = require('./routes/activities');
+var activityLog = require('./routes/activityLog');
+var activities = require('./routes/activities');
+var ideas = require('./routes/ideas');
+var authentication = require('./routes/authentication');
+var pendingIdeas = require('./routes/pendingIdeas');
 
 var app = express();
 
@@ -28,7 +32,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -38,17 +42,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 
 
-
-
 app.all('/*', activityLog);
-
-var ideasRouter = require('./routes/ideas');
 
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/ideas', ideasRouter);
-
+app.use('/ideas', ideas);
+app.use('/auth', authentication);
+app.use('/activities', activities);
+app.use('/pending_ideas', pendingIdeas);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
