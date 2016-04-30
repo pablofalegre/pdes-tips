@@ -1,0 +1,14 @@
+<div class="page-header">
+  <h3>
+    {{idea.title}}          
+  </h3>
+  propuesta por <a>{{idea.author}}</a>
+</div>
+  <p>
+    {{idea.description}}
+  </p>
+<div ng-show="isLoggedIn()">
+  <span><button ng-show="acceptPostulant()" class="btn btn-info" ng-click="postulate()">Postularme</button>
+    <button ng-show="canDelete()" class="btn btn-danger" ng-click="delete()">Eliminar</button></span>
+</div>  
+<button type="submit" ng-click="backToHome()">Volver</button>
