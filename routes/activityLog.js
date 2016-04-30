@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Activity = mongoose.model('Activity');
-var activitiesConf = require('../models/ActivitiesConfig');
+var activitiesConf = require('../config/ActivitiesConfig');
 
 
 //Middleware para creacion de eventos.

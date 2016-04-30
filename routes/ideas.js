@@ -18,7 +18,10 @@ function transitionIdeaState(req, res, next, stateMethodName) {
 }
 
 router.get('/', function(req, res, next) {
-  Idea.find({ 'state': {'$ne': 'eliminada'} }, function(err, ideas){
+  Idea.find({ 'state': {'$ne': 'eliminada'} })
+  .populate('author')
+  .populate('postulant')
+  .exec(function(err, ideas){
     if(err){ return next(err); }
 
     res.json(ideas);
@@ -27,7 +30,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/', auth, function(req, res, next) {
   var idea = new Idea(req.body);
-  idea.author = req.payload.username;
+  idea.author = req.user;
 
   idea.save(function(err, idea){
     if(err){ return next(err); }
@@ -37,7 +40,9 @@ router.post('/', auth, function(req, res, next) {
 });
 
 router.param('idea', function(req, res, next, id) {
-  var query = Idea.findById(id);
+  var query = Idea.findById(id)
+  .populate('author')
+  .populate('postulant');
 
   query.exec(function (err, idea){
     if (err) { return next(err); }
@@ -53,11 +58,11 @@ router.get('/:idea', function(req, res, next) {
 });
 
 router.put('/:idea/postulate', auth, function(req, res, next) {
-  req.idea.postulateUser(req.payload.username, requestCallback(res, next));
+  req.idea.postulateUser(req.user, requestCallback(res, next));
 });
 
 router.put('/:idea/accept', auth, function(req, res, next) {
-  req.idea.accept(req.payload.username, requestCallback(res, next));  
+  req.idea.accept(req.user, requestCallback(res, next));  
 });
 
 router.put('/:idea/reject', auth, function(req, res, next) {
@@ -65,7 +70,7 @@ router.put('/:idea/reject', auth, function(req, res, next) {
 });
 
 router.put('/:idea/delete', auth, function(req, res, next) {
-  req.idea.delete(req.payload.username, requestCallback(res, next));
+  req.idea.delete(req.user, requestCallback(res, next));
 });
 
 module.exports = router;

@@ -6,9 +6,8 @@ var jwt = require('express-jwt');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 
-router.post('*', auth, function(req, res, next) {
-  
-   	if (req.payload) {
+var loadUser = function(req, res, next){
+	if (req.payload) {
 
    		var name = req.payload.username;
    		User.find({'username' : name}, function(err, found){
@@ -18,9 +17,10 @@ router.post('*', auth, function(req, res, next) {
 
 			next();
 		});
-	
     }
-    
-});
+}
+
+router.post('*', auth, loadUser);
+router.put('*', auth, loadUser);
 
 module.exports = router;
