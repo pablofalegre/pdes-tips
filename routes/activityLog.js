@@ -9,7 +9,7 @@ var activityLog = function(req, res, next) {
   res.on('finish', function(){
 
     //despues se podria hacer algo para que un middeware deje un usuario siempre (un Anonimo si no estan logeados), y evitamos preguntar.
-    if(res.statusCode == 200 && req.payload){
+    if(res.statusCode == 200 && req.user){
       
       //TODO si no se configura el router como corresponde esto no vaa funcionar: el req.route.path va a contener el baseUrl
       var fixedPath = req.route.path;
@@ -22,7 +22,7 @@ var activityLog = function(req, res, next) {
 
       activityOpt.map(function(activity){
         
-        activity(req.payload.username, req, res).save(function(err, activity){
+        activity(req.user, req, res).save(function(err, activity){
           if(err){
             console.log('error saving ' + err);
             return next(err); 

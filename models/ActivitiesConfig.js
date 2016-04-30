@@ -3,9 +3,9 @@ var Optional = require('optional-js');
 var Activity = mongoose.model('Activity');
 
 
-var createActivity = function(username, req, res, _action, _target){ 
+var createActivity = function(user, req, res, _action, _target){ 
       return new Activity({
-          user : username,
+          user : user,
           action : _action,
           target : _target
       });
