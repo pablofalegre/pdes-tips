@@ -6,8 +6,6 @@ app.controller('IdeasCtrl', [
 	'$location',
 	function($scope, ideas, idea, auth, $location){
 
-		console.log('ideas ctrl');
-
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.idea = idea;
 		$scope.acceptPostulant = function() {
@@ -20,8 +18,6 @@ app.controller('IdeasCtrl', [
 	  	history.back();
 		};
 		$scope.canDelete = function() {
-			console.log("idea.author.username= " + idea.author.username);
-			console.log("idea.author.username= " + auth.currentUser());
 			return idea.state==='disponible' && idea.author.username === auth.currentUser();
 		};
 		$scope.delete = function() {

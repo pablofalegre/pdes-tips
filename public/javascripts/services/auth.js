@@ -34,7 +34,6 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 	};
 	auth.logIn = function(user){
 	  return $http.post('/auth/login', user).error(function(error){
-	      console.log('error gettign activities = ' + error);
 	    }).success(function(data){
 	    auth.saveToken(data.token);
 	  });

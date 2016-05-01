@@ -49,7 +49,6 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	  });
 	};		
 	o.create = function(idea) {
-  		console.log("creating idea " + idea);
 	  return $http.post('/ideas', idea, {
 	    headers: {Authorization: 'Bearer '+auth.getToken()}
 	  }).success(function(data){

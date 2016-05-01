@@ -42,7 +42,7 @@ app.config([
 			controller: 'ActivitiesCtrl',
 			resolve: {
 			    activitiesPromise: ['activities', function(activities) {
-			    	console.log('resolving');
+			    	
 			    	return activities.recent();
 			    }]
 			}
