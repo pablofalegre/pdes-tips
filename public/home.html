@@ -1,14 +1,7 @@
 <div class="page-header">
   <h1>Ideas para TIPs</h1>
 </div>
-
-<span style="font-size:20px; margin-left:10px;">
-    <a href="#/activities">Actividades</a>
-</span>
-
-
-<a href="#/pending_ideas">Ver Tareas Pendientes</a>
-
+  
 <div ng-repeat="idea in ideas | orderBy:orderProperty">        
   <span style="font-size:20px; margin-left:10px;">
     <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>

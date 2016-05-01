@@ -10,6 +10,7 @@ var passport = require('passport');
 require('./models/Users');
 require('./models/Ideas');
 require('./models/Activities');
+require('./models/Assignments');
 
 
 require('./config/passport');
@@ -23,6 +24,7 @@ var ideas = require('./routes/ideas');
 var authentication = require('./routes/authentication');
 var pendingIdeas = require('./routes/pendingIdeas');
 var findUser = require('./routes/findUser');
+var assignments = require('./routes/assignments');
 
 var app = express();
 
@@ -51,6 +53,7 @@ app.use('/ideas', ideas);
 app.use('/auth', authentication);
 app.use('/activities', activities);
 app.use('/pending_ideas', pendingIdeas);
+app.use('/assignments', assignments);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
