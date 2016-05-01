@@ -28,12 +28,14 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 	  }
 	};
 	auth.register = function(user){
-	  return $http.post('/register', user).success(function(data){
+	  return $http.post('/auth/register', user).success(function(data){
 	    auth.saveToken(data.token);
 	  });
 	};
 	auth.logIn = function(user){
-	  return $http.post('/login', user).success(function(data){
+	  return $http.post('/auth/login', user).error(function(error){
+	      console.log('error gettign activities = ' + error);
+	    }).success(function(data){
 	    auth.saveToken(data.token);
 	  });
 	};
