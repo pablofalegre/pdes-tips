@@ -3,13 +3,16 @@ app.controller('MainCtrl', [
 	'ideas',
 	'auth',
 	'assignments',
-	function($scope, ideas, auth, assignments){
+	'users',
+	function($scope, ideas, auth, assignments, users){
+		console.log('main ctrl');
 		$scope.orderProperty = '-creationDate';
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.currentUser = auth.currentUser;
 		$scope.ideas = ideas.ideas;
 		$scope.ideaAssignments = [];
 		$scope.allAssignments = assignments.assignments;
+		
 
 		$scope.acceptPostulant = function(idea) {
 			return idea.state==='disponible';
@@ -43,4 +46,14 @@ app.controller('MainCtrl', [
 			
 		};
 
+		$scope.isStudent = function(){
+
+			//return users.isStudent();
+			return true;
+		}
+		$scope.isProfessor = function(){
+
+			//return users.isProfessor();
+			return true;
+		}
 }]);
