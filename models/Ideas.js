@@ -1,32 +1,32 @@
 var mongoose = require('mongoose');
 
 var IdeaSchema = new mongoose.Schema({
-  author: String,
+  author: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   title: String,
   description: String,
   creationDate: { type: Date, default: Date.now },
-  postulant: String,
+  postulant: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   state: String
 });
 
-IdeaSchema.methods.postulateUser = function(user_id, callback){
-	this.postulant = user_id;
+IdeaSchema.methods.postulateUser = function(user, callback){
+	this.postulant = user;
 	this.state = 'en revision';
 	this.save(callback);
 };
 
-IdeaSchema.methods.accept = function(user_id, callback){
+IdeaSchema.methods.accept = function(user, callback){
 	this.state = 'aceptada';
 	this.save(callback);
 };
 
-IdeaSchema.methods.reject = function(user_id, callback){
+IdeaSchema.methods.reject = function(user, callback){
 	this.state = 'disponible';
 	this.postulant = undefined;
 	this.save(callback);
 };
 
-IdeaSchema.methods.delete = function(user_id, callback){
+IdeaSchema.methods.delete = function(user, callback){
 	this.state = 'eliminada';
 	this.save(callback);
 };

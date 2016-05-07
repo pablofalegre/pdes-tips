@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var ActivitySchema = new mongoose.Schema({
-  user: String,
+  user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   action: String,
   target: String,
   creationDate: { type: Date, default: Date.now }
@@ -9,7 +9,6 @@ var ActivitySchema = new mongoose.Schema({
 
 //no esta funcionando porque en la view llama al json y no a Activity
 ActivitySchema.methods.print = function(act) {
-  console.log("printing");
   return this.user+ " " + this.action + " " + this.target;
 };
 

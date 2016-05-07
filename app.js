@@ -22,6 +22,7 @@ var activities = require('./routes/activities');
 var ideas = require('./routes/ideas');
 var authentication = require('./routes/authentication');
 var pendingIdeas = require('./routes/pendingIdeas');
+var findUser = require('./routes/findUser');
 
 var app = express();
 
@@ -42,6 +43,7 @@ app.use(passport.initialize());
 
 app.all('/*', activityLog);
 
+app.use(findUser);
 
 app.use('/', routes);
 app.use('/users', users);
