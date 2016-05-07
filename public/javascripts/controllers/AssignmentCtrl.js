@@ -12,5 +12,18 @@ app.controller('AssignmentCtrl', [
 			assignments.all();
 		};
 		
+
+		$scope.addAssignment = function(){
+			if(!$scope.name || $scope.name === '') { return; };
+	  		assignments.add({
+	  			name: $scope.name 
+				});
+			$scope.name  = '';
+				
+		}
+
+		$scope.delete = function(assignment){
+			assignments.delete(assignment);	
+		}
 	}
 ]);

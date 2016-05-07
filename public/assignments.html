@@ -1,11 +1,31 @@
 <div class="page-header">
   <h1>Materias</h1>
 </div>
-<div ng-repeat="assignment in assignments | orderBy:'name'">        
-  <span style="font-size:20px; margin-left:10px;">
-    <a>{{assignment.name}}</a>
-  </span>
-  <span ng-show="isLoggedIn()">
-    <button class="btn btn-success" ng-click="acceptIdea(idea)">Agregar</button>
-  </span>      
-</div>
+
+<form ng-submit="addAssignment()" ng-show="isLoggedIn()" style="margin-top:30px;">
+  <h3>Agregar materia</h3>
+
+  <div class="form-group">
+    <input type="text"
+      class="form-control"
+      placeholder="Nombre"
+      ng-model="name"></input>
+  </div>
+  
+  <button type="submit" class="btn btn-primary">Agregar</button>
+</form>
+
+<h3>Lista de materias</h3>
+
+<ul class="list-group"> 
+	<div ng-repeat="assignment in assignments | orderBy:'name'">        
+		<li class="list-group-item">
+		  <span style="font-size:20px; margin-left:10px;">
+		    <a>{{assignment.name}}</a>
+		  </span>
+		  <span ng-show="isLoggedIn()">
+		    <button class="btn btn-danger" ng-click="delete(assignment)">Eliminar</button>
+		  </span>
+		</li>      
+	</div>
+</ul>

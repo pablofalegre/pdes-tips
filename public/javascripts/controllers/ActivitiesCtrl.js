@@ -7,5 +7,6 @@ app.controller('ActivitiesCtrl', [
 		$scope.home = function(){
 			activities.recent();
 		};
+
 	}
 ]);
