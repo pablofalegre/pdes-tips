@@ -21,6 +21,7 @@ router.get('/', function(req, res, next) {
   Idea.find({ 'state': {'$ne': 'eliminada'} })
   .populate('author')
   .populate('postulant')
+  .populate('assignments')
   .exec(function(err, ideas){
     if(err){ return next(err); }
 
@@ -42,7 +43,8 @@ router.post('/', auth, function(req, res, next) {
 router.param('idea', function(req, res, next, id) {
   var query = Idea.findById(id)
   .populate('author')
-  .populate('postulant');
+  .populate('postulant')
+  .populate('assignments');
 
   query.exec(function (err, idea){
     if (err) { return next(err); }

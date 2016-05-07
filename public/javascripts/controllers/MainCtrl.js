@@ -2,11 +2,14 @@ app.controller('MainCtrl', [
 	'$scope',
 	'ideas',
 	'auth',
-	function($scope, ideas, auth){
+	'assignments',
+	function($scope, ideas, auth, assignments){
 		$scope.orderProperty = '-creationDate';
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.currentUser = auth.currentUser;
-		$scope.ideas = ideas.ideas;	
+		$scope.ideas = ideas.ideas;
+		$scope.ideaAssignments = [];
+		$scope.allAssignments = assignments.assignments;
 
 		$scope.acceptPostulant = function(idea) {
 			return idea.state==='disponible';
@@ -23,11 +26,21 @@ app.controller('MainCtrl', [
 	  		ideas.create({
 	  			title: $scope.title,
 	  			description: $scope.description,
-	  			state: "disponible" 
+	  			state: "disponible",
+	  			assignments: $scope.ideaAssignments
 				});
 				$scope.title  = '';
 				$scope.description = '';
-		}
+				$scope.ideaAssignments = [];
+		};
 
+		$scope.groupAssignment = function(assignment){
+
+			if($scope.ideaAssignments.indexOf(assignment) >= 0){
+			} else {
+				$scope.ideaAssignments.push(assignment);	
+			}
+			
+		};
 
 }]);

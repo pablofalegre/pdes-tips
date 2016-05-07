@@ -6,7 +6,8 @@ var IdeaSchema = new mongoose.Schema({
   description: String,
   creationDate: { type: Date, default: Date.now },
   postulant: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-  state: String
+  state: String,
+  assignments: [{type: mongoose.Schema.Types.ObjectId, ref: 'Assignment'}]
 });
 
 IdeaSchema.methods.postulateUser = function(user, callback){

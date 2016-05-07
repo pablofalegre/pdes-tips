@@ -13,7 +13,11 @@ app.config([
 	      resolve: {
 			    ideaPromise: ['ideas', function(ideas){
 			      return ideas.getAll();
-			    }]
+			    }],
+			    materiasPromise: ['assignments', function(assignments){
+			    	return assignments.all();
+			    }
+			    ]
 			  }
 	    })
 	    .state('pending_ideas', {
