@@ -12,6 +12,7 @@ router.get('/', function(req, res, next) {
       '$gte' : lastWeekDate
     }
   }).
+   populate('user').
    sort({ creationDate: -1 }).
    exec(function(err, acts){
      if(err){ 
