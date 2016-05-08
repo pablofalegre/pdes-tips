@@ -3,9 +3,15 @@ app.factory('assignments', ['$http', 'auth', function($http, auth){
     assignments: []
   };
 
+  var authHeader = function(){
+    return {
+        headers: {Authorization: 'Bearer '+auth.getToken()}
+    };
+  }
+
   o.all = function() {
     return $http.get('/assignments').error(function(error){
-	      console.log('error= ' + error);
+	      console.log('error getting assignments= ' + error);
 	    }).success(function(data){
 
         angular.copy(data, o.assignments);
@@ -13,17 +19,13 @@ app.factory('assignments', ['$http', 'auth', function($http, auth){
   };
 
   o.add = function(assignment) {
-    return $http.post('/assignments', assignment, {
-      headers: {Authorization: 'Bearer '+auth.getToken()}
-    }).success(function(data){
+    return $http.post('/assignments', assignment, authHeader()).success(function(data){
         o.assignments.push(data);
     });
   };
 
   o.delete = function(assignment) {
-    return $http.put('/assignments/'+ assignment._id + '/delete', null, {
-      headers: {Authorization: 'Bearer '+auth.getToken()}
-    }).success(function(data){
+    return $http.put('/assignments/'+ assignment._id + '/delete', null, authHeader()).success(function(data){
       o.all();
     });
   };

@@ -6,6 +6,14 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
     ideas: [],
     pending_ideas: []
   };
+
+
+	var authHeader = function(){
+		return {
+	    	headers: {Authorization: 'Bearer '+auth.getToken()}
+		};
+	}
+
   o.home = function(){ 
   	return $http.get('/');
   };
@@ -15,7 +23,8 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
     });
   };
   o.getPendingIdeas = function() {
-    return $http.get('/pending_ideas').success(function(data){
+    return $http.get('/pending_ideas', authHeader())
+    .success(function(data){
       angular.copy(data, o.pending_ideas);
     });
   };
@@ -31,34 +40,27 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 	  	idea.state = 'en revision';
 	  });
 	};
-    var authHeader = {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	}
+    
 
 	o.accept = function(idea) {
-	  return $http.put('/ideas/'+ idea._id + '/accept', null, authHeader).success(function(data){
+	  return $http.put('/ideas/'+ idea._id + '/accept', null, authHeader()).success(function(data){
 	  	idea = data;
 	  });
 	};	
 	o.reject = function(idea) {
-	  return $http.put('/ideas/'+ idea._id + '/reject', null, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
+	  return $http.put('/ideas/'+ idea._id + '/reject', null, authHeader())
+	  .success(function(data){
 	  	idea.state = 'disponible';
 	  	idea.postulant = undefined;
 	  });
 	};		
 	o.create = function(idea) {
-	  return $http.post('/ideas', idea, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
+	  return $http.post('/ideas', idea, authHeader()).success(function(data){
 	    	o.ideas.push(data);
 	  });
 	};
 	o.delete = function(idea) {
-	  return $http.put('/ideas/'+ idea._id + '/delete', null, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
+	  return $http.put('/ideas/'+ idea._id + '/delete', null, authHeader()).success(function(data){
 	  	idea.state = 'eliminada';
 	  });
 	};
