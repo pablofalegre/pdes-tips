@@ -12,6 +12,7 @@ app.factory('assignments', ['$http', 'auth', function($http, auth){
   o.all = function() {
     return $http.get('/assignments').error(function(error){
 	      console.log('error getting assignments= ' + error);
+
 	    }).success(function(data){
 
         angular.copy(data, o.assignments);

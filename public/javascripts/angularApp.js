@@ -17,6 +17,7 @@ app.config([
 			    materiasPromise: ['assignments', function(assignments){
 			    	return assignments.all();
 			    }]
+
 			  }
 	    })
 	    .state('pending_ideas', {

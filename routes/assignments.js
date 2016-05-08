@@ -9,6 +9,7 @@ var roles = require('../models/Roles');
 
 
 router.get('/',function(req, res, next) {
+
   Assignment.find(function(err, assignments){
     if(err){ 
     	console.log("error getting assignments " + err);
@@ -17,7 +18,9 @@ router.get('/',function(req, res, next) {
   });
 });
 
-router.post('/', fullAuth(roles.director), function(req, res, next) {
+
+router.post('/', fullAuth([roles.director]), function(req, res, next) {
+
   var assignment = new Assignment(req.body);
 
   assignment.save(function(err, idea){
@@ -27,9 +30,7 @@ router.post('/', fullAuth(roles.director), function(req, res, next) {
 });
 
 
-router.put('/:assignment/delete', fullAuth(roles.director), function(req, res, next) {
-
-	console.log("deleting assignment = " + req.params.assignment);
+router.put('/:assignment/delete', fullAuth([roles.director]), function(req, res, next) {
 
 	Assignment.findById(req.params.assignment).remove(function(err){
 		if(err){ return next(err); }

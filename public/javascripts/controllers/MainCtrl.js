@@ -12,7 +12,6 @@ app.controller('MainCtrl', [
 		$scope.ideas = ideas.ideas;
 		$scope.ideaAssignments = [];
 		$scope.allAssignments = assignments.assignments;
-		
 
 		$scope.acceptPostulant = function(idea) {
 			return idea.state==='disponible';

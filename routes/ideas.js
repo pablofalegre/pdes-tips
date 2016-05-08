@@ -6,7 +6,6 @@ var Idea = mongoose.model('Idea');
 var jwt = require('express-jwt');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
-
 var fullAuth = require('./fullAuth');
 var roles = require('../models/Roles');
 
@@ -34,7 +33,9 @@ router.get('/', function(req, res, next) {
   });
 });
 
+
 router.post('/', fullAuth([roles.professor]), function(req, res, next) {
+
   var idea = new Idea(req.body);
   idea.author = req.user;
 
@@ -63,6 +64,7 @@ router.param('idea', function(req, res, next, id) {
 router.get('/:idea', function(req, res, next) {  
   res.json(req.idea);  
 });
+
 
 router.put('/:idea/postulate', fullAuth([roles.student]), function(req, res, next) {
   req.idea.postulateUser(req.user, requestCallback(res, next));

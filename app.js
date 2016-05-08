@@ -26,7 +26,6 @@ var pendingIdeas = require('./routes/pendingIdeas');
 var findUser = require('./routes/findUser');
 var assignments = require('./routes/assignments');
 
-
 var app = express();
 
 // view engine setuphu
