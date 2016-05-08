@@ -2,11 +2,23 @@
   <h3>
     {{idea.title}}          
   </h3>
-  propuesta por <a>{{idea.author}}</a>
+  propuesta por <a>{{idea.author.username}}</a>
 </div>
   <p>
     {{idea.description}}
   </p>
+
+
+  <h4> Materias relacionadas </h4>
+
+  <ul class="list-group"> 
+    <div ng-repeat="assignment in idea.assignments | orderBy:'name'">        
+      <li class="list-group-item">
+          <span class="label label-success">{{assignment.name}}</span>
+      </li>      
+    </div>
+  </ul>
+
 <div ng-show="isLoggedIn()">
   <span><button ng-show="acceptPostulant()" class="btn btn-info" ng-click="postulate()">Postularme</button>
     <button ng-show="canDelete()" class="btn btn-danger" ng-click="delete()">Eliminar</button></span>

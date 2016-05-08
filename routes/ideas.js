@@ -6,6 +6,8 @@ var Idea = mongoose.model('Idea');
 var jwt = require('express-jwt');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
+var findUser = require('./findUser');
+
 function requestCallback(res, next) {
   return function(err, idea){
     if (err) { return next(err); }
@@ -21,6 +23,7 @@ router.get('/', function(req, res, next) {
   Idea.find({ 'state': {'$ne': 'eliminada'} })
   .populate('author')
   .populate('postulant')
+  .populate('assignments')
   .exec(function(err, ideas){
     if(err){ return next(err); }
 
@@ -28,7 +31,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.post('/', auth, function(req, res, next) {
+router.post('/', auth, findUser, function(req, res, next) {
   var idea = new Idea(req.body);
   idea.author = req.user;
 
@@ -42,7 +45,8 @@ router.post('/', auth, function(req, res, next) {
 router.param('idea', function(req, res, next, id) {
   var query = Idea.findById(id)
   .populate('author')
-  .populate('postulant');
+  .populate('postulant')
+  .populate('assignments');
 
   query.exec(function (err, idea){
     if (err) { return next(err); }
@@ -57,19 +61,19 @@ router.get('/:idea', function(req, res, next) {
   res.json(req.idea);  
 });
 
-router.put('/:idea/postulate', auth, function(req, res, next) {
+router.put('/:idea/postulate', auth, findUser, function(req, res, next) {
   req.idea.postulateUser(req.user, requestCallback(res, next));
 });
 
-router.put('/:idea/accept', auth, function(req, res, next) {
+router.put('/:idea/accept', auth, findUser,function(req, res, next) {
   req.idea.accept(req.user, requestCallback(res, next));  
 });
 
-router.put('/:idea/reject', auth, function(req, res, next) {
+router.put('/:idea/reject', auth, findUser,function(req, res, next) {
   transitionIdeaState(req, res, next, "reject")
 });
 
-router.put('/:idea/delete', auth, function(req, res, next) {
+router.put('/:idea/delete', auth, findUser,function(req, res, next) {
   req.idea.delete(req.user, requestCallback(res, next));
 });
 

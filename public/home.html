@@ -1,20 +1,13 @@
 <div class="page-header">
   <h1>Ideas para TIPs</h1>
 </div>
-
-<span style="font-size:20px; margin-left:10px;">
-    <a href="#/activities">Actividades</a>
-</span>
-
-
-<a href="#/pending_ideas">Ver Tareas Pendientes</a>
-
+  
 <div ng-repeat="idea in ideas | orderBy:orderProperty">        
   <span style="font-size:20px; margin-left:10px;">
     <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>
   </span>
   <span>
-    propuesta por <a>{{idea.author}}</a>
+    propuesta por <a>{{idea.author.username}}</a>
   </span>
 
   <span am-time-ago=idea.creationDate></span>
@@ -38,8 +31,27 @@
     placeholder="Descripción"
     ng-model="description"></input>
   </div>
+
   <button type="submit" class="btn btn-primary">Agregar</button>
 </form>
+
+<div>
+  <h4> Materias relacionadas </h4>
+
+  <ul class="list-group"> 
+    <div ng-repeat="assignment in ideaAssignments | orderBy:'name'">        
+      <li class="list-group-item">
+          <span class="label label-success">{{assignment.name}}</span>
+      </li>      
+    </div>
+  </ul>
+
+  <h4> Materias disponibles </h4>
+
+  <div ng-repeat="assignment in allAssignments">
+       <button ng-click="groupAssignment(assignment)" class="btn btn-primary">{{assignment.name}}</button>
+  </div>
+</div>
 <div ng-hide="isLoggedIn()">
   <h3>Tenes que <a href="/#/login">Ingresar</a> o <a href="/#/register">Registrarte</a> antes de agregar una idea.</h3>
 </div>

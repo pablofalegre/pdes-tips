@@ -7,11 +7,14 @@
     <script src="/javascripts/services/ideas.js"></script>
     <script src="/javascripts/services/auth.js"></script>
     <script src="/javascripts/services/activities.js"></script>
+    <script src="/javascripts/services/assignments.js"></script>
     <script src="/javascripts/controllers/NavCtrl.js"></script>
     <script src="/javascripts/controllers/AuthCtrl.js"></script>
     <script src="/javascripts/controllers/MainCtrl.js"></script>
     <script src="/javascripts/controllers/IdeasCtrl.js"></script>
     <script src="/javascripts/controllers/PendingIdeasCtrl.js"></script>
+    <script src="/javascripts/controllers/AssignmentCtrl.js"></script>
+    <script src="/javascripts/controllers/ActivitiesCtrl.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
     
     <script src="moment.min.js"></script>
@@ -29,6 +32,16 @@
 
       </ul>
     </nav>
+
+    <div class="container">
+      <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#/home">Inicio</a></li>
+        <li role="presentation"><a href="#/activities">Actividad reciente</a></li>
+        <li role="presentation"><a href="#/pending_ideas">Pendientes de revisión</a></li>
+        <li role="presentation"><a href="#/assignments">Materias</a></li>
+      </ul>
+    </div>
+    
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
         <ui-view></ui-view>        
