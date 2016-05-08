@@ -28,8 +28,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 
 			username = payload.username;
 			roles = payload.roles;
-		    console.log('user = ' + username);
-		    console.log('roles = ' + roles);
+
 		  }
 
 	  return {

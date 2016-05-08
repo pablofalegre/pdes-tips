@@ -24,25 +24,29 @@
     <style> .glyphicon-thumbs-up { cursor:pointer } </style>
   </head>
   <body ng-app="tpTips">
-    <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
-      <ul class="nav navbar-nav">
-        <li ng-show="isLoggedIn()"><a>{{ currentUser().username }}</a></li>
-        <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
-        <li ng-hide="isLoggedIn()"><a href="/#/login">Log In</a></li>
-        <li ng-hide="isLoggedIn()"><a href="/#/register">Register</a></li>
+    <div ng-controller="NavCtrl">
 
-      </ul>
-    </nav>
+      <nav class="navbar navbar-default pull-right">
+        <ul class="nav navbar-nav">
+          <li ng-show="isLoggedIn()"><a>{{ currentUser().username }}</a></li>
+          <li ng-show="isLoggedIn()"><a>{{ currentUser().roles }}</a></li>
+          <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
+          <li ng-hide="isLoggedIn()"><a href="/#/login">Log In</a></li>
+          <li ng-hide="isLoggedIn()"><a href="/#/register">Register</a></li>
 
-    <div class="container">
-      <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a href="#/home">Inicio</a></li>
-        <li role="presentation"><a href="#/activities">Actividad reciente</a></li>
-        <li role="presentation"><a href="#/pending_ideas">Pendientes de revisión</a></li>
-        <li role="presentation"><a href="#/assignments">Materias</a></li>
-      </ul>
+        </ul>
+      </nav>
+
+      <div class="container">
+        <ul class="nav nav-tabs">
+          <li role="presentation" class="active"><a href="#/home">Inicio</a></li>
+          <li role="presentation"><a href="#/activities">Actividad reciente</a></li>
+          <li role="presentation" ng-show="isDirector()"><a href="#/pending_ideas">Pendientes de revisión</a></li>
+          <li role="presentation" ng-show="isDirector()"><a href="#/assignments">Materias</a></li>
+        </ul>
+      </div>
     </div>
-    
+
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
         <ui-view></ui-view>        

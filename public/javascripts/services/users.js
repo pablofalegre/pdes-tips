@@ -25,6 +25,9 @@ app.factory('users', ['$http', 'auth', function($http, auth){
 		return roles.hasRole(auth.currentUser().roles, roles.student);
 	};
 
+	o.userRoles = function(){
+		return auth.currentUser().roles;
+	}
 
   return o;
 }]);

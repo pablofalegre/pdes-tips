@@ -3,6 +3,7 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var passport = require('passport');
+var roles = require('../models/Roles');
 
 router.post('/register', function(req, res, next){
   if(!req.body.username || !req.body.password){
@@ -15,8 +16,7 @@ router.post('/register', function(req, res, next){
 
   user.setPassword(req.body.password)
 
-  //user.roles = ['Profesor', 'Director', 'Alumno'];
-  user.roles = ['Alumno'];
+  user.roles = roles.all();
 
   user.save(function (err){
     if(err){ 

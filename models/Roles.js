@@ -19,3 +19,9 @@ roles.isProfessor = function(user){
 roles.isStudent = function(user){
 	return this.hasRole(user, this.student);
 };
+
+roles.all = function(){
+	return [this.director, this.student, this.professor];
+}
+
+module.exports = roles;
