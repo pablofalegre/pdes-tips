@@ -15,7 +15,8 @@ router.post('/register', function(req, res, next){
 
   user.setPassword(req.body.password)
 
-  user.roles = [];
+  //user.roles = ['Profesor', 'Director', 'Alumno'];
+  user.roles = ['Alumno'];
 
   user.save(function (err){
     if(err){ 

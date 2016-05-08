@@ -47,13 +47,9 @@ app.controller('MainCtrl', [
 		};
 
 		$scope.isStudent = function(){
-
-			//return users.isStudent();
-			return true;
+			return users.isStudent();
 		}
 		$scope.isProfessor = function(){
-
-			//return users.isProfessor();
-			return true;
+			return users.isProfessor();
 		}
 }]);

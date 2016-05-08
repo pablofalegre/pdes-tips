@@ -3,35 +3,26 @@ app.factory('users', ['$http', 'auth', function($http, auth){
  	
   };
 
-  o.getUser = function() {
-  		return $http.get('/users/currentuser').error(function(error){
-		      console.log('error getting user =' + error);
-		    }).success(function(data){
-	      o.user = data;
-	    });	
-  	
-  };
-
 	var roles = {
 		director : "Director",
 		student : "Alumno",
 		professor : "Profesor"
 	};
 
-	roles.hasRole = function(user, rol){
-		return user.roles.indexOf(rol) >= 0;
+	roles.hasRole = function(roles, rol){
+		return roles.indexOf(rol) >= 0;
 	};
 
 	o.isDirector = function(){
-		return roles.hasRole(o.user, roles.director);
+		return roles.hasRole(auth.currentUser().roles, roles.director);
 	};
 
 	o.isProfessor = function(){
-		return roles.hasRole(o.user, roles.professor);
+			return roles.hasRole(auth.currentUser().roles, roles.professor);	
 	};
 
 	o.isStudent = function(){
-		return roles.hasRole(o.user, roles.student);
+		return roles.hasRole(auth.currentUser().roles, roles.student);
 	};
 
 
