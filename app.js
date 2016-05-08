@@ -46,7 +46,7 @@ app.use(passport.initialize());
 
 app.all('/*', activityLog);
 
-app.use(findUser);
+//app.use(findUser);
 
 app.use('/', routes);
 app.use('/users', users);
