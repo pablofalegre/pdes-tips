@@ -7,6 +7,8 @@ var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 var Assignment = mongoose.model('Assignment');
 
+var findUser = require('./findUser');
+
 
 router.get('/', function(req, res, next) {
   Assignment.find(function(err, assignments){
@@ -17,7 +19,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.post('/', auth, function(req, res, next) {
+router.post('/', auth, findUser, function(req, res, next) {
   var assignment = new Assignment(req.body);
 
   assignment.save(function(err, idea){
@@ -27,7 +29,7 @@ router.post('/', auth, function(req, res, next) {
 });
 
 
-router.put('/:assignment/delete', auth, function(req, res, next) {
+router.put('/:assignment/delete', auth, findUser, function(req, res, next) {
 
 	console.log("deleting assignment = " + req.params.assignment);
 

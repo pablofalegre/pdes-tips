@@ -8,7 +8,6 @@ app.factory('assignments', ['$http', 'auth', function($http, auth){
 	      console.log('error= ' + error);
 	    }).success(function(data){
 
-        console.log("assignments found = " + data);
         angular.copy(data, o.assignments);
     });
   };
@@ -25,7 +24,6 @@ app.factory('assignments', ['$http', 'auth', function($http, auth){
     return $http.put('/assignments/'+ assignment._id + '/delete', null, {
       headers: {Authorization: 'Bearer '+auth.getToken()}
     }).success(function(data){
-      console.log("deleting ok");
       o.all();
     });
   };
