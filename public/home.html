@@ -16,41 +16,45 @@
   <label ng-show="wasAccepted(idea)" class="label label-success">Aceptada</label>
 
 </div>
-<form ng-submit="addIdea()" ng-show="isLoggedIn()" style="margin-top:30px;">
-  <h3>Agregar nueva idea </h3>
 
-  <div class="form-group">
-    <input type="text"
-      class="form-control"
-      placeholder="Título"
-      ng-model="title"></input>
-  </div>
-  <div class="form-group">
-    <input type="text"
-    class="form-control"
-    placeholder="Descripción"
-    ng-model="description"></input>
-  </div>
+<div ng-show="isProfessor()">
+  <form ng-submit="addIdea()" ng-show="isLoggedIn()" style="margin-top:30px;">
+    <h3>Agregar nueva idea </h3>
 
-  <button type="submit" class="btn btn-primary">Agregar</button>
-</form>
-
-<div>
-  <h4> Materias relacionadas </h4>
-
-  <ul class="list-group"> 
-    <div ng-repeat="assignment in ideaAssignments | orderBy:'name'">        
-      <li class="list-group-item">
-          <span class="label label-success">{{assignment.name}}</span>
-      </li>      
+    <div class="form-group">
+      <input type="text"
+        class="form-control"
+        placeholder="Título"
+        ng-model="title"></input>
     </div>
-  </ul>
+    <div class="form-group">
+      <input type="text"
+      class="form-control"
+      placeholder="Descripción"
+      ng-model="description"></input>
+    </div>
 
-  <h4> Materias disponibles </h4>
+    <button type="submit" class="btn btn-primary">Agregar</button>
+  </form>
 
-  <div ng-repeat="assignment in allAssignments">
-       <button ng-click="groupAssignment(assignment)" class="btn btn-primary">{{assignment.name}}</button>
+  <div>
+    <h4> Materias relacionadas </h4>
+
+    <ul class="list-group"> 
+      <div ng-repeat="assignment in ideaAssignments | orderBy:'name'">        
+        <li class="list-group-item">
+            <span class="label label-success">{{assignment.name}}</span>
+        </li>      
+      </div>
+    </ul>
+
+    <h4> Materias disponibles </h4>
+
+    <div ng-repeat="assignment in allAssignments">
+         <button ng-click="groupAssignment(assignment)" class="btn btn-primary">{{assignment.name}}</button>
+    </div>
   </div>
+
 </div>
 <div ng-hide="isLoggedIn()">
   <h3>Tenes que <a href="/#/login">Ingresar</a> o <a href="/#/register">Registrarte</a> antes de agregar una idea.</h3>

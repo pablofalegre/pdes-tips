@@ -17,7 +17,7 @@ require('./config/passport');
 
 mongoose.connect('mongodb://localhost/news');
 var routes = require('./routes/index');
-var users = require('./routes/users');
+//var users = require('./routes/users');
 var activityLog = require('./routes/activityLog');
 var activities = require('./routes/activities');
 var ideas = require('./routes/ideas');
@@ -48,7 +48,7 @@ app.all('/*', activityLog);
 //app.use(findUser);
 
 app.use('/', routes);
-app.use('/users', users);
+//app.use('/users', users);
 app.use('/ideas', ideas);
 app.use('/auth', authentication);
 app.use('/activities', activities);
