@@ -5,7 +5,7 @@ app.controller('MainCtrl', [
 	'assignments',
 	'users',
 	function($scope, ideas, auth, assignments, users){
-		console.log('main ctrl');
+		
 		$scope.orderProperty = '-creationDate';
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.currentUser = auth.currentUser;
@@ -48,8 +48,11 @@ app.controller('MainCtrl', [
 
 		$scope.isStudent = function(){
 			return users.isStudent();
-		}
+		};
 		$scope.isProfessor = function(){
 			return users.isProfessor();
+		};
+		$scope.isDirector = function(){
+			return users.isDirector();
 		}
 }]);
