@@ -18,7 +18,7 @@
 </div>
 
 <div ng-show="isProfessor()">
-  <form ng-submit="addIdea()" ng-show="isLoggedIn()" style="margin-top:30px;">
+  <form name="ideaForm" ng-submit="addIdea()" ng-show="isLoggedIn()" style="margin-top:30px;">
     <h3>Agregar nueva idea </h3>
 
     <div class="form-group">
@@ -28,32 +28,54 @@
         ng-model="title"></input>
     </div>
     <div class="form-group">
-      <input type="text"
+      <textarea
       class="form-control"
       placeholder="Descripción"
-      ng-model="description"></input>
+      ng-model="description">
+    </textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary">Agregar</button>
-  </form>
+    <div class="form-group">
+      <h4>Links relacionados</h4>
+      <div ng-repeat="li in tmpLinks">
+           <b>{{li}}</b>
+      </div>
+
+      <input type="url"
+              name="linkInput"
+              class="form-control"
+              placeholder="Link"
+              ng-model="url.text"></input>
+    
+      <a href="" ng-click="addLink()" class="btn btn-info" role="button" ng-disabled="ideaForm.$invalid || url.text==''">
+            <span class="glyphicon glyphicon-plus"></span>
+      </a>
+    </div>
 
   <div>
-    <h4> Materias relacionadas </h4>
-
-    <ul class="list-group"> 
-      <div ng-repeat="assignment in ideaAssignments | orderBy:'name'">        
-        <li class="list-group-item">
+    <h4> Materias relacionadas </h4>    
+    <ul class="list-inline"> 
+      <li ng-repeat="assignment in ideaAssignments | orderBy:'name'">  
             <span class="label label-success">{{assignment.name}}</span>
-        </li>      
-      </div>
+      </li>      
+        
     </ul>
 
     <h4> Materias disponibles </h4>
 
     <div ng-repeat="assignment in allAssignments">
-         <button ng-click="groupAssignment(assignment)" class="btn btn-primary">{{assignment.name}}</button>
+         <p>{{assignment.name}}</p>
+         <a href="" ng-click="groupAssignment(assignment)" class="btn btn-primary btn-xs">
+            <span class="glyphicon glyphicon-plus"></span>
+         </a>
     </div>
   </div>
+
+    <br/>
+    <button type="submit" class="btn btn-primary">Agregar</button>
+  </form>
+
+  
 
 </div>
 <div ng-hide="isLoggedIn()">
