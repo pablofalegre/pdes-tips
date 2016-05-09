@@ -66,4 +66,5 @@ app.controller('MainCtrl', [
 				$scope.url.text = "";
 			}
 		}
+
 }]);

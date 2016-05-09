@@ -18,7 +18,9 @@
 </div>
 
 <div ng-show="isProfessor()">
+
   <form name="ideaForm" ng-submit="addIdea()" ng-show="isLoggedIn()" style="margin-top:30px;">
+
     <h3>Agregar nueva idea </h3>
 
     <div class="form-group">
@@ -28,6 +30,7 @@
         ng-model="title"></input>
     </div>
     <div class="form-group">
+
       <textarea
       class="form-control"
       placeholder="Descripción"
@@ -59,11 +62,13 @@
             <span class="label label-success">{{assignment.name}}</span>
       </li>      
         
+
     </ul>
 
     <h4> Materias disponibles </h4>
 
     <div ng-repeat="assignment in allAssignments">
+
          <p>{{assignment.name}}</p>
          <a href="" ng-click="groupAssignment(assignment)" class="btn btn-primary btn-xs">
             <span class="glyphicon glyphicon-plus"></span>
@@ -74,8 +79,6 @@
     <br/>
     <button type="submit" class="btn btn-primary">Agregar</button>
   </form>
-
-  
 
 </div>
 <div ng-hide="isLoggedIn()">
