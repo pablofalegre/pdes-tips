@@ -27,7 +27,6 @@ var activityLog = function(req, res, next) {
             console.log('error saving ' + err);
             return next(err); 
           }
-          console.log("saved activity = " + activity);
         });
         
       });

@@ -6,6 +6,10 @@ var Idea = mongoose.model('Idea');
 var jwt = require('express-jwt');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
+var fullAuth = require('./fullAuth');
+var roles = require('../models/Roles');
+
+
 function requestCallback(res, next) {
   return function(err, idea){
     if (err) { return next(err); }
@@ -21,6 +25,7 @@ router.get('/', function(req, res, next) {
   Idea.find({ 'state': {'$ne': 'eliminada'} })
   .populate('author')
   .populate('postulant')
+  .populate('assignments')
   .exec(function(err, ideas){
     if(err){ return next(err); }
 
@@ -28,7 +33,9 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.post('/', auth, function(req, res, next) {
+
+router.post('/', fullAuth([roles.professor]), function(req, res, next) {
+
   var idea = new Idea(req.body);
   idea.author = req.user;
 
@@ -42,7 +49,8 @@ router.post('/', auth, function(req, res, next) {
 router.param('idea', function(req, res, next, id) {
   var query = Idea.findById(id)
   .populate('author')
-  .populate('postulant');
+  .populate('postulant')
+  .populate('assignments');
 
   query.exec(function (err, idea){
     if (err) { return next(err); }
@@ -57,19 +65,20 @@ router.get('/:idea', function(req, res, next) {
   res.json(req.idea);  
 });
 
-router.put('/:idea/postulate', auth, function(req, res, next) {
+
+router.put('/:idea/postulate', fullAuth([roles.student]), function(req, res, next) {
   req.idea.postulateUser(req.user, requestCallback(res, next));
 });
 
-router.put('/:idea/accept', auth, function(req, res, next) {
+router.put('/:idea/accept', fullAuth([roles.director]),function(req, res, next) {
   req.idea.accept(req.user, requestCallback(res, next));  
 });
 
-router.put('/:idea/reject', auth, function(req, res, next) {
+router.put('/:idea/reject', fullAuth([roles.director]),function(req, res, next) {
   transitionIdeaState(req, res, next, "reject")
 });
 
-router.put('/:idea/delete', auth, function(req, res, next) {
+router.put('/:idea/delete', fullAuth([roles.professor, roles.director]),function(req, res, next) {
   req.idea.delete(req.user, requestCallback(res, next));
 });
 

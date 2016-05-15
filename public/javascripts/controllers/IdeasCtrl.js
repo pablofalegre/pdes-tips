@@ -4,12 +4,14 @@ app.controller('IdeasCtrl', [
 	'idea',
 	'auth',
 	'$location',
-	function($scope, ideas, idea, auth, $location){
+
+	'users',
+	function($scope, ideas, idea, auth, $location, users){
 
 		$scope.isLoggedIn = auth.isLoggedIn;
 		$scope.idea = idea;
 		$scope.acceptPostulant = function() {
-			return idea.state==='disponible';
+			return idea.state==='disponible' && users.isStudent();
 		};
 		$scope.postulate = function(){
 		  ideas.postulate(idea);
@@ -18,7 +20,7 @@ app.controller('IdeasCtrl', [
 	  	history.back();
 		};
 		$scope.canDelete = function() {
-			return idea.state==='disponible' && idea.author.username === auth.currentUser();
+			return idea.state==='disponible' && (idea.author.username === auth.currentUser().username || users.isDirector());
 		};
 		$scope.delete = function() {
 			ideas.delete(idea);

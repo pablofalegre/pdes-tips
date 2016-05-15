@@ -13,7 +13,11 @@ app.config([
 	      resolve: {
 			    ideaPromise: ['ideas', function(ideas){
 			      return ideas.getAll();
+			    }],
+			    materiasPromise: ['assignments', function(assignments){
+			    	return assignments.all();
 			    }]
+
 			  }
 	    })
 	    .state('pending_ideas', {
@@ -66,6 +70,16 @@ app.config([
 		      $state.go('home');
 		    }
 		  }]
+		})
+		.state('assignments', {
+			url: '/assignments',
+			templateUrl: '/assignments.html',
+			controller: 'AssignmentCtrl',
+			resolve: {
+			    assignmentsPromise: ['assignments', function(assignments) {
+			    	return assignments.all();
+			    }]
+			}
 		});
 	  $urlRouterProvider.otherwise('home');
 	}

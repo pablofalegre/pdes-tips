@@ -1,7 +1,7 @@
 
 <div ng-repeat="act in activities | orderBy:'-creationDate'">        
 	<span style="font-size:20px; margin-left:10px;">
-	  <h4><b>{{act.user}}</b> {{act.action}}: "{{act.target}}"</h4>
+	  <h4><b>{{act.user.username}}</b> {{act.action}}: "{{act.target}}"</h4>
 	</span>
 	<span am-time-ago=act.creationDate></span>
 </div>

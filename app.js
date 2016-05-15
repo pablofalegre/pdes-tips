@@ -10,19 +10,21 @@ var passport = require('passport');
 require('./models/Users');
 require('./models/Ideas');
 require('./models/Activities');
+require('./models/Assignments');
 
 
 require('./config/passport');
 
 mongoose.connect('mongodb://localhost/news');
 var routes = require('./routes/index');
-var users = require('./routes/users');
+//var users = require('./routes/users');
 var activityLog = require('./routes/activityLog');
 var activities = require('./routes/activities');
 var ideas = require('./routes/ideas');
 var authentication = require('./routes/authentication');
 var pendingIdeas = require('./routes/pendingIdeas');
 var findUser = require('./routes/findUser');
+var assignments = require('./routes/assignments');
 
 var app = express();
 
@@ -43,14 +45,15 @@ app.use(passport.initialize());
 
 app.all('/*', activityLog);
 
-app.use(findUser);
+//app.use(findUser);
 
 app.use('/', routes);
-app.use('/users', users);
+//app.use('/users', users);
 app.use('/ideas', ideas);
 app.use('/auth', authentication);
 app.use('/activities', activities);
 app.use('/pending_ideas', pendingIdeas);
+app.use('/assignments', assignments);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

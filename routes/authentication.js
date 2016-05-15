@@ -3,6 +3,7 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var passport = require('passport');
+var roles = require('../models/Roles');
 
 router.post('/register', function(req, res, next){
   if(!req.body.username || !req.body.password){
@@ -15,8 +16,13 @@ router.post('/register', function(req, res, next){
 
   user.setPassword(req.body.password)
 
+  user.roles = roles.all();
+
   user.save(function (err){
-    if(err){ return next(err); }
+    if(err){ 
+      console.log('error saving user = ' + err);
+      return next(err); 
+    }
 
     return res.json({token: user.generateJWT()})
   });
