@@ -12,6 +12,8 @@ app.controller('MainCtrl', [
 		$scope.ideas = ideas.ideas;
 		$scope.ideaAssignments = [];
 		$scope.allAssignments = assignments.assignments;
+		$scope.tmpLinks = [];
+		$scope.url = {text: ""};
 
 		$scope.acceptPostulant = function(idea) {
 			return idea.state==='disponible';
@@ -29,11 +31,13 @@ app.controller('MainCtrl', [
 	  			title: $scope.title,
 	  			description: $scope.description,
 	  			state: "disponible",
-	  			assignments: $scope.ideaAssignments
-				});
-				$scope.title  = '';
-				$scope.description = '';
-				$scope.ideaAssignments = [];
+	  			assignments: $scope.ideaAssignments,
+	  			links: $scope.tmpLinks
+			});
+			$scope.title  = '';
+			$scope.description = '';
+			$scope.ideaAssignments = [];
+			$scope.tmpLinks = [];
 		};
 
 		$scope.groupAssignment = function(assignment){
@@ -54,4 +58,13 @@ app.controller('MainCtrl', [
 		$scope.isDirector = function(){
 			return users.isDirector();
 		}
+
+		$scope.addLink = function(){
+			if(!$scope.ideaForm.$invalid && $scope.url.text != ''
+				&& $scope.tmpLinks.indexOf($scope.url.text) < 0){
+				$scope.tmpLinks.push($scope.url.text);
+				$scope.url.text = "";
+			}
+		}
+
 }]);

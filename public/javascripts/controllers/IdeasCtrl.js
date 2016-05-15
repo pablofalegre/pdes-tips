@@ -4,7 +4,6 @@ app.controller('IdeasCtrl', [
 	'idea',
 	'auth',
 	'$location',
-
 	'users',
 	function($scope, ideas, idea, auth, $location, users){
 

@@ -2,11 +2,10 @@ var mongoose = require('mongoose');
 var Activity = mongoose.model('Activity');
 var activitiesConf = require('../config/ActivitiesConfig');
 
+// var Q = require('q');
 
-//Middleware para creacion de eventos.
-var activityLog = function(req, res, next) {
-
-  res.on('finish', function(){
+var makeActivity = function(req, res){
+    // var deferred = Q.defer();
 
     //despues se podria hacer algo para que un middeware deje un usuario siempre (un Anonimo si no estan logeados), y evitamos preguntar.
     if(res.statusCode == 200 && req.user){
@@ -25,14 +24,27 @@ var activityLog = function(req, res, next) {
         activity(req.user, req, res).save(function(err, activity){
           if(err){
             console.log('error saving ' + err);
-            return next(err); 
+            //return next(err);
+            // deferred.reject(err); 
           }
         });
         
       });
-    }   
-  });  
-  next();
+    }
+    // return deferred.promise;   
+}
+
+//Middleware para creacion de eventos.
+var activityLog = function(req, res, next) {
+
+  var make = Q.fcall(makeActivity(req, res)).then(function(){
+    next();
+  }).catch(function(err){ 
+    next(err);
+  });
+
+  res.on('finish', make);  
+  //next();
 };
 
 module.exports = activityLog;
