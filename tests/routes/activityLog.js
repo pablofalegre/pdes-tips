@@ -1,17 +1,17 @@
 var express = require("express");
 
-var app = express();
-app.use("/", router);
-
 var mongoose = require("mongoose");
 var mockgoose = require("mockgoose");
 
+require('../../models/Activities');
 var Activity = mongoose.model('Activity');
-var activitiesConf = require('../config/ActivitiesConfig');
+var activityLog = require('../../routes/activityLog');
 
 var request = require("supertest");
 
-var dummyMiddleware = function(req, res, next) {
+var httpMock = require("node-mocks-http");
+
+var dummyMiddleware = function(req, res) {
         next();
 }
 
@@ -38,16 +38,25 @@ describe("router activityLog", function() {
                 post.save(done);
         });
 */
-        describe("POST /posts/<id>/upvote", function() {
+        describe("when intercepting req res", function() {
 
-                it("should increment upvote counter by one", function() {
-                        request(app)
-                                .put("/posts/" + post._id + "/upvote")
-                                .expect(200)
-                                .end(function(err, response) {
-                                        should.not.exist(err);
-                                        response.body.should.have.property("upvotes").equal(13);
-                                });
+                it("should create activity when necessary", function(done) {
+                        var req = httpMock.createRequest({
+                                method : 'POST',
+                                url : '/ideas'
+                        });
+                        var res = httpMock.createResponse({
+                                  eventEmitter: require('events').EventEmitter
+                        });
+
+                        activityLog(req, res);
+
+                        res.on('finish', function(){
+                                done();
+                        });
+
+                        res.send('');
+                        console.log("EEEE");
                 });
 
         });

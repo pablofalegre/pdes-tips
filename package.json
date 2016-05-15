@@ -27,6 +27,8 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.4.5"
+    "express-mocks-http": "0.0.11",
+    "mocha": "^2.4.5",
+    "node-mocks-http": "^1.5.2"
   }
 }
