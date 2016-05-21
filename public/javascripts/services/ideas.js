@@ -44,7 +44,8 @@ app.factory('ideas', ['$http', 'auth', function($http, auth){
 
 	o.accept = function(idea) {
 	  return $http.put('/ideas/'+ idea._id + '/accept', null, authHeader()).success(function(data){
-	  	idea = data;
+	  	// idea = data;
+	  	angular.copy(data, idea);
 	  });
 	};	
 	o.reject = function(idea) {
