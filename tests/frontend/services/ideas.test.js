@@ -138,6 +138,31 @@ describe("ideas service", function() {
 			$httpBackend.flush();
 		});
 	});
+
+	describe("#create()", function() {
+
+		it("should call backend and create new idea", function(done) {
+
+			var ideasMock = ['x', 'y', 'z'];
+
+			var newIdeaMock = 'w';
+
+			var promise = ideas.create(newIdeaMock);
+
+			promise.then(function(data) {
+				ideas.ideas.should.include('w');
+				done();
+			});
+
+			var resMock = [];
+
+			$httpBackend.when('GET', "/assignments").respond(resMock);
+			$httpBackend.when('GET', '/ideas').respond(ideasMock);
+			
+			$httpBackend.expectPOST("/ideas").respond(newIdeaMock);
+			$httpBackend.flush();
+		});
+	});
 });
 
 
