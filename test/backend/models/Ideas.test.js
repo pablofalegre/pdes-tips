@@ -11,14 +11,21 @@ describe("Idea", function() {
 
 	before(function(done) {
 		mockgoose(mongoose).then(function() {
-			mongoose.connect("mongodb://localhost/asdf");
+			mongoose.connect("mongodb://localhost/tests");
 			done();
+		}).catch(function(err){
+			done(err);
 		})
 	});
 
 	afterEach(function(done) {
 		mockgoose.reset(done);
-	})
+
+	});
+
+	after(function(done){
+		mongoose.disconnect(done);
+	});
 
 	var idea;
 	var postulant;
