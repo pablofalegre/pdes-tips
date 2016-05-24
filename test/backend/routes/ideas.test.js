@@ -6,6 +6,7 @@ var sinon = require("sinon");
 var express = require("express");
 
 var app = express();
+app.use(require('body-parser').json());
 
 var mongoose = require("mongoose");
 var mockgoose = require("mockgoose");
@@ -65,12 +66,26 @@ describe("router Ideas", function() {
 		postulant = new User();
 	});
 
+	describe("GET /ideas/<id>", function() {
+		it("obtains the expected idea", function(done) {
+		request(app)
+			.get("/" + idea._id)
+			.expect(200)
+			.end(function(err, response) {				
+				expect(response.body).to.have.property('title').and.equal(idea.title);
+				expect(response.body).to.have.property('state').and.equal(idea.state);
+				expect(response.body).to.have.property('description').and.equal(idea.description);
+				done();
+			});
+		});
+	});
+
 	describe("PUT /ideas/<id>/postulate", function() {
-		before(function(done){
-			fail = true;
-			done();
-		})
 		describe("when not logged in", function(){
+			before(function(done){
+				fail = true;
+				done();
+			});
 			it("throws http 401 Unauthorized", function(done) {
 			request(app)
 				.put("/" + idea._id + "/postulate", dummyMiddleware)
@@ -82,6 +97,10 @@ describe("router Ideas", function() {
 		});
 
 		describe("when logged in", function(){
+			beforeEach(function(done){
+				fail = false;
+				done();
+			});
 			it("change idea state to 'en revision'", function(done) {
 			request(app)
 				.put("/" + idea._id + "/postulate", dummyMiddleware)
@@ -95,4 +114,82 @@ describe("router Ideas", function() {
 		});
 	});
 
+	describe("PUT /ideas/<id>/accept", function() {
+		describe("when not logged in", function(){
+			before(function(done){
+				fail = true;
+				done();
+			});
+			it("throws http 401 Unauthorized", function(done) {
+			request(app)
+				.put("/" + idea._id + "/accept", dummyMiddleware)
+				.expect(401)
+				.end(function() {
+					done();
+				});
+			});
+		});
+
+		describe("when logged in", function(){
+			beforeEach(function(done){
+				fail = false;
+				done();
+			});
+			it("changes idea state to 'aceptada'", function(done) {
+			request(app)
+				.put("/" + idea._id + "/accept", dummyMiddleware)
+				.expect(200)
+				.end(function(err, response) {
+					should.not.exist(err);
+					response.body.should.have.property("state").that.equal('aceptada');
+					done();
+				});
+			});
+			xit("changes the idea postulant", function(done) {
+			request(app)
+				.put("/" + idea._id + "/accept", dummyMiddleware)
+				.send({user: postulant})
+				.expect(200)
+				.end(function(err, response) {
+					should.not.exist(err);
+					response.body.should.have.property("postulant").that.equal(postulant);
+					done();
+				});
+			});
+		});
+	});
+
+	describe("PUT /ideas/<id>/reject", function() {
+		describe("when not logged in", function(){
+			before(function(done){
+				fail = true;
+				done();
+			})
+			it("throws http 401 Unauthorized", function(done) {
+			request(app)
+				.put("/" + idea._id + "/reject", dummyMiddleware)
+				.expect(401)
+				.end(function() {
+					done();
+				});
+			});
+		});
+
+		describe("when logged in", function(){
+			beforeEach(function(done){
+				fail = false;
+				done();
+			});
+			xit("changes idea state to 'disponible'", function(done) {
+			request(app)
+				.put("/" + idea._id + "/reject", dummyMiddleware)
+				.expect(200)
+				.end(function(err, response) {
+					should.not.exist(err);
+					response.body.should.have.property("state").that.equal('disponible');
+					done();
+				});
+			});
+		});
+	});
 });
