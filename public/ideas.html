@@ -9,15 +9,23 @@
   </p>
 
 
-  <h4> Materias relacionadas </h4>
+  <h4>Links relacionados</h4>
 
   <ul class="list-group"> 
-    <div ng-repeat="assignment in idea.assignments | orderBy:'name'">        
+    <div ng-repeat="link in idea.links">        
       <li class="list-group-item">
-          <span class="label label-success">{{assignment.name}}</span>
+          <a href="{{link}}">{{link}}</a>
       </li>      
     </div>
   </ul>
+
+  <h4> Materias relacionadas </h4>
+
+  <ul class="list-inline"> 
+      <li ng-repeat="assignment in idea.assignments | orderBy:'name'">  
+            <span class="label label-success">{{assignment.name}}</span>
+      </li>
+  </ul>    
 
 <div ng-show="isLoggedIn()">
   <span><button ng-show="acceptPostulant()" class="btn btn-info" ng-click="postulate()">Postularme</button>
