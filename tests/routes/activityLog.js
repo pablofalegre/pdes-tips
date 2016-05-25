@@ -56,7 +56,6 @@ describe("router activityLog", function() {
                         });
 
                         res.send('');
-                        console.log("EEEE");
                 });
 
         });

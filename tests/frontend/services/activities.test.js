@@ -26,7 +26,6 @@ describe("service activities", function() {
 				//upvote devuelve una promise que no se va a resolver hasta el backend
 				//no conteste. El backend va a contestar una vez que invoquemos a 
 				//$httpBackend.flush();
-				console.log('activities is = ' + activities);
 
 				var promise = activities.recent();
 				promise.then(function() {

@@ -35,7 +35,7 @@ describe('MainCtrl', function() {
             		success : function(a){
             		return a(ideaMock);
 	            	}
-            }};
+            };};
 
         	$scope.acceptIdea(ideaMock);
 
