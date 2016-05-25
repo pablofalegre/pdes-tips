@@ -4,10 +4,10 @@ var should = require('chai').should();
 var mongoose = require('mongoose');
 var mockgoose = require("mockgoose");
 
-var Idea = require("../../../models/Ideas")
-var User = require("../../../models/Users")
+var Idea = require("../../../models/Ideas");
+var User = require("../../../models/Users");
 
-describe("Idea", function() {  
+describe("Idea", function() {
 
 	before(function(done) {
 		mockgoose(mongoose).then(function() {
@@ -15,7 +15,7 @@ describe("Idea", function() {
 			done();
 		}).catch(function(err){
 			done(err);
-		})
+		});
 	});
 
 	afterEach(function(done) {
@@ -39,11 +39,11 @@ describe("Idea", function() {
 		postulant = new User();
 	});
 
-	describe("#postulateUser", function() {		
+	describe("#postulateUser", function() {
 
 		it("changes state to 'en revision'", function(done) {
 			idea.postulateUser(postulant, function(err,savedIdea){
-				should.not.exist(err);						
+				should.not.exist(err);
 				savedIdea.should.have.property("state").that.equal("en revision");
 				done();
 			});
@@ -51,25 +51,25 @@ describe("Idea", function() {
 
 		it("sets the received user as the postulant", function(done) {
 			idea.postulateUser(postulant, function(err,savedIdea){
-				should.not.exist(err);						
+				should.not.exist(err);
 				savedIdea.should.have.property("postulant").that.equal(postulant);
 				done();
 			});
 		});
 	});
 
-	describe("#accept", function() {		
+	describe("#accept", function() {
 
 		it("changes state to 'aceptada'", function(done) {
 			idea.accept(postulant, function(err,savedIdea){
-				should.not.exist(err);						
+				should.not.exist(err);
 				expect(savedIdea).to.have.a.property("state").that.equal("aceptada");
 				done();
 			});
-		});		
+		});
 	});
 
-	describe("#reject", function() {		
+	describe("#reject", function() {
 
 		before(function(done) {
 			idea.postulateUser(postulant);
@@ -78,30 +78,30 @@ describe("Idea", function() {
 
 		it("changes state to 'disponible'", function(done) {
 			idea.reject(postulant, function(err,savedIdea){
-				should.not.exist(err);						
+				should.not.exist(err);
 				expect(savedIdea).to.have.a.property("state").that.equal("disponible");
 				done();
 			});
-		});		
+		});
 
 
 		it("changes postulant to undefined", function(done) {
 			idea.reject(postulant, function(err,savedIdea){
-				should.not.exist(err);						
+				should.not.exist(err);
 				expect(savedIdea).to.have.a.property("postulant").that.equal(undefined);
 				done();
 			});
-		});		
+		});
 	});
 
-	describe("#delete", function() {		
+	describe("#delete", function() {
 
 		it("changes state to 'eliminada'", function(done) {
 			idea.delete(postulant, function(err,savedIdea){
-				should.not.exist(err);						
+				should.not.exist(err);
 				expect(savedIdea).to.have.a.property("state").that.equal("eliminada");
 				done();
 			});
-		});		
+		});
 	});
 });

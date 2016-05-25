@@ -11,7 +11,7 @@ function requestCallback(res, next) {
   return function(err, idea){
     if (err) { return next(err); }
     res.json(idea);
-  }
+  };
 }
 
 function transitionIdeaState(req, res, next, stateMethodName) {
@@ -72,7 +72,7 @@ router.put('/:idea/accept', fullAuth([roles.director]),function(req, res, next) 
 });
 
 router.put('/:idea/reject', fullAuth([roles.director]),function(req, res, next) {
-  transitionIdeaState(req, res, next, "reject")
+  req.idea.reject(req.user, requestCallback(res, next));
 });
 
 router.put('/:idea/delete', fullAuth([roles.professor, roles.director]),function(req, res, next) {

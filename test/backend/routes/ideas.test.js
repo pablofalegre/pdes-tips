@@ -15,18 +15,22 @@ var Idea = require("../../../models/Ideas");
 var User = require("../../../models/Users");
 
 var fail = false;
+var postulant;
 var router = proxyquire("../../../routes/ideas.js", {
 	'./fullAuth': function(x) {
-		return [];
+
 		if (fail){
 			return [function(req, res, next){
 				next("error");
 			}]}
 		else {
-			return [];
+			return [function(req, res, next){
+				req.user =  postulant;
+				next();
+			}];
 		}
 	}
-	
+
 });
 app.use("/", router);
 var request = require("supertest");
@@ -55,7 +59,6 @@ describe("router Ideas", function() {
 	});
 
 	var idea;
-	var postulant;
 
 	beforeEach(function(done) {
 		idea = new Idea();
@@ -63,7 +66,8 @@ describe("router Ideas", function() {
 		idea.state = "disponible";
 		idea.description = "A Description";
 		idea.save(done);
-		postulant = new User();
+		postulant = new User({username: "Pepe"});
+		postulant.save();
 	});
 
 	describe("GET /ideas/<id>", function() {
@@ -71,7 +75,7 @@ describe("router Ideas", function() {
 		request(app)
 			.get("/" + idea._id)
 			.expect(200)
-			.end(function(err, response) {				
+			.end(function(err, response) {
 				expect(response.body).to.have.property('title').and.equal(idea.title);
 				expect(response.body).to.have.property('state').and.equal(idea.state);
 				expect(response.body).to.have.property('description').and.equal(idea.description);
@@ -111,6 +115,17 @@ describe("router Ideas", function() {
 					done();
 				});
 			});
+			it("changes the idea postulant", function(done) {
+			request(app)
+				.put("/" + idea._id + "/postulate", dummyMiddleware)
+				.expect(200)
+				.end(function(err, response) {
+					should.not.exist(err);
+					response.body.should.have.property("postulant")
+					response.body.postulant.username.should.be.equal(postulant.username);
+					done();
+				});
+			});
 		});
 	});
 
@@ -145,17 +160,6 @@ describe("router Ideas", function() {
 					done();
 				});
 			});
-			xit("changes the idea postulant", function(done) {
-			request(app)
-				.put("/" + idea._id + "/accept", dummyMiddleware)
-				.send({user: postulant})
-				.expect(200)
-				.end(function(err, response) {
-					should.not.exist(err);
-					response.body.should.have.property("postulant").that.equal(postulant);
-					done();
-				});
-			});
 		});
 	});
 
@@ -164,7 +168,7 @@ describe("router Ideas", function() {
 			before(function(done){
 				fail = true;
 				done();
-			})
+			});
 			it("throws http 401 Unauthorized", function(done) {
 			request(app)
 				.put("/" + idea._id + "/reject", dummyMiddleware)
@@ -180,13 +184,47 @@ describe("router Ideas", function() {
 				fail = false;
 				done();
 			});
-			xit("changes idea state to 'disponible'", function(done) {
+			it("changes idea state to 'disponible'", function(done) {
 			request(app)
 				.put("/" + idea._id + "/reject", dummyMiddleware)
 				.expect(200)
 				.end(function(err, response) {
 					should.not.exist(err);
 					response.body.should.have.property("state").that.equal('disponible');
+					done();
+				});
+			});
+		});
+	});
+
+	describe("PUT /ideas/<id>/delete", function() {
+		describe("when not logged in", function(){
+			before(function(done){
+				fail = true;
+				done();
+			});
+			it("throws http 401 Unauthorized", function(done) {
+			request(app)
+				.put("/" + idea._id + "/delete", dummyMiddleware)
+				.expect(401)
+				.end(function() {
+					done();
+				});
+			});
+		});
+
+		describe("when logged in", function(){
+			beforeEach(function(done){
+				fail = false;
+				done();
+			});
+			it("changes idea state to 'eliminada'", function(done) {
+			request(app)
+				.put("/" + idea._id + "/delete", dummyMiddleware)
+				.expect(200)
+				.end(function(err, response) {
+					should.not.exist(err);
+					response.body.should.have.property("state").that.equal('eliminada');
 					done();
 				});
 			});
