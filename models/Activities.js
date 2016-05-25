@@ -8,8 +8,12 @@ var ActivitySchema = new mongoose.Schema({
 });
 
 //no esta funcionando porque en la view llama al json y no a Activity
-ActivitySchema.methods.print = function(act) {
-  return this.user+ " " + this.action + " " + this.target;
+ActivitySchema.methods.print = function() {
+	var username = "";
+	if(this.user){
+		username = this.user.username;
+	}
+  return username + " " + this.action + " " + this.target;
 };
 
 mongoose.model('Activity', ActivitySchema);

@@ -43,7 +43,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 
 
-app.all('/*', activityLog);
+app.all('/*', function(req, res, next){
+ activityLog(req, res);
+ next();
+});
 
 //app.use(findUser);
 

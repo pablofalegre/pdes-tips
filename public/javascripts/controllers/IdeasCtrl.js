@@ -16,7 +16,7 @@ app.controller('IdeasCtrl', [
 		  ideas.postulate(idea);
 		};
 		$scope.backToHome = function() {
-	  	history.back();
+	  		history.back();
 		};
 		$scope.canDelete = function() {
 			return idea.state==='disponible' && (idea.author.username === auth.currentUser().username || users.isDirector());
