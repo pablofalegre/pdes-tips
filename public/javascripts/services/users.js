@@ -9,6 +9,8 @@ app.factory('users', ['$http', 'auth', function($http, auth){
 		professor : "Profesor"
 	};
 
+	o.roles = roles;
+
 	roles.hasRole = function(roles, rol){
 		return roles.indexOf(rol) >= 0;
 	};
