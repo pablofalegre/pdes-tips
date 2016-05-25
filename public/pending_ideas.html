@@ -6,7 +6,7 @@
     <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>
   </span>
   <span>
-    propuesta por <a>{{idea.author}}</a>
+    propuesta por <a>{{idea.author.username}}</a>
   </span>
   <span am-time-ago=idea.creationDate></span>
   <span ng-show="isLoggedIn()">
