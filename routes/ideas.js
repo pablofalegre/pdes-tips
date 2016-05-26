@@ -3,9 +3,6 @@ var router = express.Router();
 var mongoose = require('mongoose');
 
 var Idea = mongoose.model('Idea');
-var jwt = require('express-jwt');
-var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
-
 var fullAuth = require('./fullAuth');
 var roles = require('../models/Roles');
 
@@ -14,7 +11,7 @@ function requestCallback(res, next) {
   return function(err, idea){
     if (err) { return next(err); }
     res.json(idea);
-  }
+  };
 }
 
 function transitionIdeaState(req, res, next, stateMethodName) {
@@ -61,8 +58,8 @@ router.param('idea', function(req, res, next, id) {
   });
 });
 
-router.get('/:idea', function(req, res, next) {  
-  res.json(req.idea);  
+router.get('/:idea', function(req, res, next) {
+  res.json(req.idea);
 });
 
 
@@ -71,11 +68,11 @@ router.put('/:idea/postulate', fullAuth([roles.student]), function(req, res, nex
 });
 
 router.put('/:idea/accept', fullAuth([roles.director]),function(req, res, next) {
-  req.idea.accept(req.user, requestCallback(res, next));  
+  req.idea.accept(req.user, requestCallback(res, next));
 });
 
 router.put('/:idea/reject', fullAuth([roles.director]),function(req, res, next) {
-  transitionIdeaState(req, res, next, "reject")
+  req.idea.reject(req.user, requestCallback(res, next));
 });
 
 router.put('/:idea/delete', fullAuth([roles.professor, roles.director]),function(req, res, next) {

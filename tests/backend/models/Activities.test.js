@@ -1,4 +1,4 @@
-require('../../models/Activities');
+require('../../../models/Activities');
 
 var Activity = require('mongoose').model('Activity');
 
