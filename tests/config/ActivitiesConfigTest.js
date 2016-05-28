@@ -37,11 +37,7 @@ describe("config ActivitiesConfig", function() {
                         var req = { body : body};
                         var activityFunc = found.get();
 
-                        console.log("ccc " + activityFunc);
-
                         var activity = activityFunc("lucas", req, "");
-
-                        console.log("ccc " + activity);
 
                         activity.target.should.be.equal("un titulo");
                         activity.action.should.be.equal("subio una idea");
