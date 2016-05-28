@@ -18,7 +18,7 @@ require('./config/passport');
 mongoose.connect('mongodb://localhost/news');
 var routes = require('./routes/index');
 //var users = require('./routes/users');
-var activityLog = require('./routes/activityLog');
+var activityLog = require('./routes/activityLog').logger;
 var activities = require('./routes/activities');
 var ideas = require('./routes/ideas');
 var authentication = require('./routes/authentication');

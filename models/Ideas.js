@@ -33,5 +33,5 @@ IdeaSchema.methods.delete = function(user, callback){
 	this.save(callback);
 };
 
-mongoose.model('Idea', IdeaSchema);
+module.exports = mongoose.model('Idea', IdeaSchema);
 
