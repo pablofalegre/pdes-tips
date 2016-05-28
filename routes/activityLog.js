@@ -48,4 +48,4 @@ var activityLog = function(req, res) {
   res.on('finish', make);  
 };
 
-module.exports = activityLog;
+module.exports = { logger: activityLog, maker: makeActivity};
