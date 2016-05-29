@@ -69,7 +69,8 @@ describe('TpTpis protractor', function(done) {
             if (p) {
                 console.log('loggin out ');
                 return found.click().then(function() {
-                    return protractor.promise.fullyResolved(); });
+                    return protractor.promise.fullyResolved();
+                });
             } else {
                 console.log('already loged out');
                 return protractor.promise.fullyResolved();
@@ -148,35 +149,34 @@ describe('TpTpis protractor', function(done) {
         return f;
     };
 
-    var filterIdea = function(title){
+    var filterIdea = function(title) {
 
         return function(elem, index) {
-          return elem.getText().then(function(text) {
-            return text == title;
-          });
+            return elem.getText().then(function(text) {
+                return text == title;
+            });
         };
     };
 
 
     var deleteIdea = function(ideaTitle) {
-        var f = function(algo) {
+        return function(algo) {
             browser.get('http://localhost:3000/');
 
             var title = element.all(by.binding('idea.title')).filter(filterIdea(ideaTitle)).first();
 
-            title.click().then(function(){
+            title.click().then(function() {
                 return element(by.css('[ng-click="delete()"]')).click();
             });
 
         };
-        return f;
     };
 
-    var verifyDeletion = function(ideaTitle){
-        var f = function(algo) {
+    var verifyDeletion = function(ideaTitle) {
+        return function(algo) {
             browser.get('http://localhost:3000/');
 
-            return element.all(by.binding('idea.title')).filter(filterIdea(ideaTitle)).count().then(function(amount){
+            return element.all(by.binding('idea.title')).filter(filterIdea(ideaTitle)).count().then(function(amount) {
                 amount.should.be.equal(0);
                 return protractor.promise.fullyResolved();
             });
@@ -191,7 +191,60 @@ describe('TpTpis protractor', function(done) {
         return randomText;
     };
 
+    var postulateStudent = function(ideaTitle) {
+
+        return function(algo) {
+            browser.get('http://localhost:3000/');
+
+            var title = element.all(by.binding('idea.title')).filter(filterIdea(ideaTitle)).first();
+
+            return title.click().then(function() {
+                return element(by.css('[ng-click="postulate()"]')).click();
+            });
+        };
+    };
+
+    var filterDisplayed = function(elem, index) {
+            return elem.isDisplayed().then(function(b) {
+                console.log('displayed ? = ' + b);
+                return (b === true);
+            });
+    };
+
+    var verifyPostulated = function(ideaTitle) {
+
+        return function(algo) {
+            browser.get('http://localhost:3000/');
+
+            return element.all(by.binding('idea.title'))
+                .filter(filterIdea(ideaTitle))
+                .first()
+                .element(by.xpath('ancestor::span'))
+                .element(by.xpath('following-sibling::label'))
+                .element(by.xpath('following-sibling::label'))
+                .getText().then(function(text) {
+                    text.should.be.equal('En Revision');
+                    console.log('TEXT DL LABEL = ' + text);
+                    return protractor.promise.fullyResolved();
+                });
+        };
+    };
+
     describe('ideas ', function(done) {
+
+        it('a student can postulate on an idea', function(done) {
+
+            var anIdea = randomTitle(15);
+            login(professor)
+                .then(postIdea(anIdea))
+                .then(logout)
+                .then(function() {
+                    return login(alumno);
+                })
+                .then(postulateStudent(anIdea))
+                .then(verifyPostulated(anIdea))
+                .then(done);
+        });
 
         it('should be possible to post a new idea as a professor', function(done) {
 
