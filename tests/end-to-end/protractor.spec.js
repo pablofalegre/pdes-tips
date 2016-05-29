@@ -8,6 +8,8 @@ describe('TpTpis protractor', function(done) {
 
     var alumno = 'alumno';
     var professor = 'profesor';
+    //esto es intencion porque ahora todos tienen todos los roles. Quiero poder terminarlo.
+    var director = 'profesor';
 
 
     var createUser = function(user) {
@@ -172,6 +174,41 @@ describe('TpTpis protractor', function(done) {
         };
     };
 
+    var changePendingIdea = function(ideaTitle, ngClick) {
+        return function(algo) {
+            browser.get('http://localhost:3000/#/pending_ideas');
+
+            return element.all(by.binding('idea.title'))
+                .filter(filterIdea(ideaTitle))
+                .first()
+                .element(by.xpath('ancestor::span'))
+                .element(by.xpath('following-sibling::span'))
+                .element(by.xpath('following-sibling::span'))
+                .element(by.xpath('following-sibling::span'))
+                // .element(by.css('[ng-click="rejectIdea(idea)"]'))
+                .element(by.css('[ng-click="' + ngClick + '"]'))
+                .click();
+
+        };
+    };
+
+    var acceptIdea = function(ideaTitle) {
+        return function(algo) {
+            browser.get('http://localhost:3000/#/pending_ideas');
+
+            return element.all(by.binding('idea.title'))
+                .filter(filterIdea(ideaTitle))
+                .first()
+                .element(by.xpath('ancestor::span'))
+                .element(by.xpath('following-sibling::span'))
+                .element(by.xpath('following-sibling::span'))
+                .element(by.xpath('following-sibling::span'))
+                .element(by.css('[ng-click="acceptIdea(idea)"]'))
+                .click();
+
+        };
+    };
+
     var verifyDeletion = function(ideaTitle) {
         return function(algo) {
             browser.get('http://localhost:3000/');
@@ -180,6 +217,40 @@ describe('TpTpis protractor', function(done) {
                 amount.should.be.equal(0);
                 return protractor.promise.fullyResolved();
             });
+        };
+    };
+
+    var verifyRejection = function(ideaTitle) {
+        return function(algo) {
+            browser.get('http://localhost:3000/');
+
+            return element.all(by.binding('idea.title'))
+                .filter(filterIdea(ideaTitle))
+                .first()
+                .element(by.xpath('ancestor::span'))
+                .element(by.xpath('following-sibling::label'))
+                .isDisplayed().then(function(displayed) {
+                    displayed.should.be.true;
+                    return protractor.promise.fullyResolved();
+                });
+        };
+    };
+
+    var verifyAccept = function(ideaTitle) {
+        return function(algo) {
+            browser.get('http://localhost:3000/');
+
+            return element.all(by.binding('idea.title'))
+                .filter(filterIdea(ideaTitle))
+                .first()
+                .element(by.xpath('ancestor::span'))
+                .element(by.xpath('following-sibling::label'))
+                .element(by.xpath('following-sibling::label'))
+                .element(by.xpath('following-sibling::label'))
+                .isDisplayed().then(function(displayed) {
+                    displayed.should.be.true;
+                    return protractor.promise.fullyResolved();
+                });
         };
     };
 
@@ -205,10 +276,10 @@ describe('TpTpis protractor', function(done) {
     };
 
     var filterDisplayed = function(elem, index) {
-            return elem.isDisplayed().then(function(b) {
-                console.log('displayed ? = ' + b);
-                return (b === true);
-            });
+        return elem.isDisplayed().then(function(b) {
+            console.log('displayed ? = ' + b);
+            return (b === true);
+        });
     };
 
     var verifyPostulated = function(ideaTitle) {
@@ -224,7 +295,6 @@ describe('TpTpis protractor', function(done) {
                 .element(by.xpath('following-sibling::label'))
                 .getText().then(function(text) {
                     text.should.be.equal('En Revision');
-                    console.log('TEXT DL LABEL = ' + text);
                     return protractor.promise.fullyResolved();
                 });
         };
@@ -266,6 +336,44 @@ describe('TpTpis protractor', function(done) {
                 .then(verifyIdea(anIdea))
                 .then(deleteIdea(anIdea))
                 .then(verifyDeletion(anIdea))
+                .then(done);
+        });
+
+        it('a director can reject an idea that is in revision state', function(done) {
+
+            var anIdea = randomTitle(20);
+            login(professor)
+                .then(postIdea(anIdea))
+                .then(logout)
+                .then(function() {
+                    return login(alumno);
+                })
+                .then(postulateStudent(anIdea))
+                .then(logout)
+                .then(function() {
+                    return login(director);
+                })
+                .then(changePendingIdea(anIdea, 'rejectIdea(idea)'))
+                .then(verifyRejection(anIdea))
+                .then(done);
+        });
+
+        it('a director can accept an idea that is in revision state', function(done) {
+
+            var anIdea = randomTitle(25);
+            login(professor)
+                .then(postIdea(anIdea))
+                .then(logout)
+                .then(function() {
+                    return login(alumno);
+                })
+                .then(postulateStudent(anIdea))
+                .then(logout)
+                .then(function() {
+                    return login(director);
+                })
+                .then(changePendingIdea(anIdea, 'acceptIdea(idea)'))
+                .then(verifyAccept(anIdea))
                 .then(done);
         });
     });

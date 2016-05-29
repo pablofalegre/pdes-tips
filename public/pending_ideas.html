@@ -1,7 +1,7 @@
 <div class="page-header">
-  <h1>Ideas pendientes de revision</h1>
+    <h1>Ideas pendientes de revision</h1>
 </div>
-<div ng-repeat="idea in ideas | orderBy:orderProperty">        
+<div ng-repeat="idea in ideas | orderBy:orderProperty">
   <span style="font-size:20px; margin-left:10px;">
     <a href="#/ideas/{{idea._id}}">{{idea.title}}</a>
   </span>
@@ -12,9 +12,9 @@
   <span ng-show="isLoggedIn()">
     <button class="btn btn-success" ng-click="acceptIdea(idea)">Aceptar idea</button>
     <button class="btn btn-danger" ng-click="rejectIdea(idea)">Rechazar idea</button>
-  </span>      
+  </span>
 </div>
-<button type="submit" ng-click="backToHome()">Volver</button>      
+<button type="submit" ng-click="backToHome()">Volver</button>
 <div ng-hide="isLoggedIn()">
-  <h3>Debe <a href="/#/login">Ingresar</a> o <a href="/#/register">Registrarse</a> para poder aceptar o rechazar ideas</h3>
+    <h3>Debe <a href="/#/login">Ingresar</a> o <a href="/#/register">Registrarse</a> para poder aceptar o rechazar ideas</h3>
 </div>
