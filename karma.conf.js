@@ -15,14 +15,31 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
- 	'node_modules/angular/angular.min.js',
-    	'node_modules/angular-mocks/angular-mocks.js',
-'node_modules/angular-ui-router/release/angular-ui-router.min.js',
-'node_modules/moment/moment.js',
-'node_modules/angular-moment/angular-moment.min.js',
-      'public/javascripts/**/*.js',
-      'tests/frontend/**/*.js'
-    ],
+ 	"tests/frontend/dependencies/test-dependencies.js",
+ 	"public/javascripts/angularApp.js",
+ 	"public/javascripts/modules/services/activities.js",
+ 	"public/javascripts/modules/services/assignments.js",
+ 	"public/javascripts/modules/services/auth.js",
+ 	"public/javascripts/modules/services/ideas.js",
+ 	"public/javascripts/modules/services/users.js",
+ 	"public/javascripts/modules/controllers/ActivitiesCtrl.js",
+ 	"public/javascripts/modules/controllers/AssignmentCtrl.js",
+ 	"public/javascripts/modules/controllers/AuthCtrl.js",
+ 	"public/javascripts/modules/controllers/IdeasCtrl.js",
+ 	"public/javascripts/modules/controllers/MainCtrl.js",
+ 	"public/javascripts/modules/controllers/NavCtrl.js",
+ 	"public/javascripts/modules/controllers/PendingIdeasCtrl.js",
+ 	"public/javascripts/external/dependencies.js",
+ 	"tests/frontend/controllers/ActivitiesCtrl.test.js",
+ 	"tests/frontend/controllers/AssignmentCtrl.test.js",
+ 	"tests/frontend/controllers/IdeasCtrl.test.js",
+ 	"tests/frontend/controllers/MainCtrl.test.js",
+ 	"tests/frontend/controllers/PendingIdeasCtrl.test.js",
+ 	"tests/frontend/services/activities.test.js",
+ 	"tests/frontend/services/assignments.test.js",
+ 	"tests/frontend/services/ideas.test.js",
+ 	"tests/frontend/services/users.test.js"
+ 	],
 
 
     // list of files to exclude
