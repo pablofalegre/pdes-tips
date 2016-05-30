@@ -10,13 +10,15 @@ var gulpFilter = require('gulp-filter');
 
 // Test tools
 var mocha = require("gulp-mocha");
+var protractor = require("gulp-protractor").protractor;
 var KarmaServer = require("karma").Server;
 
 var sources = {
   js: ["public/javascripts/external/**/*.js", "public/javascripts/angularApp.js", "public/javascripts/modules/services/**/*.js", "public/javascripts/modules/controllers/**/*.js"],
   test: {
     frontend: ["tests/frontend/dependencies/**/*.js","public/javascripts/angularApp.js", "public/javascripts/modules/services/**/*.js", "public/javascripts/modules/controllers/**/*.js", "public/javascripts/**/*.js",'tests/frontend/**/*.js'],
-    backend: ["tests/backend/**/*.js"]
+    backend: ["tests/backend/**/*.js"],
+    e2e: ["tests/end-to-end/**/*.js"]
   }
 };
 
@@ -24,6 +26,34 @@ var sources = {
 gulp.task("test:backend", function() {
   return gulp.src(sources.test.backend)
     .pipe(mocha());
+});
+
+gulp.task("test:frontend", ["karma:dependency:link"], function(done) {
+  new KarmaServer({
+    configFile: __dirname + "/karma.conf.js",
+    singleRun: true
+  }).start(done);
+});
+
+gulp.task("test:e2e", ["build"], function() {
+  return gulp.src(sources.test.e2e)
+    .pipe(protractor({configFile: "protractor.conf.js"}));
+});
+
+//Dependencies handling tasks
+function dependencyCopy(outDir, outFile, options) {
+  return gulp.src("bower.json")
+      .pipe(mainBowerFiles(options || {}))
+      .pipe(concat(outFile))
+      .pipe(uglify())
+    .pipe(gulp.dest(outDir));
+}
+gulp.task("dependency:external:copy", function() {
+  return dependencyCopy("public/javascripts/external", "dependencies.js");
+});
+
+gulp.task("dependency:test:copy", function() {
+  return dependencyCopy("tests/frontend/dependencies", "test-dependencies.js", {includeDev: true});
 });
 
 gulp.task("dependency:link", ["dependency:external:copy"], function() {
@@ -36,7 +66,6 @@ gulp.task("dependency:link", ["dependency:external:copy"], function() {
     }))
     .pipe(gulp.dest("views"));
 });
-
 
 gulp.task("karma:dependency:link", ["dependency:external:copy", "dependency:test:copy"], function() {
   var dependencies = gulp.src(sources.test.frontend);
@@ -52,34 +81,12 @@ gulp.task("karma:dependency:link", ["dependency:external:copy", "dependency:test
     }))
     .pipe(gulp.dest("."));
 });
-
-function dependencyCopy(outDir, outFile, options) {
-  return gulp.src("bower.json")
-      .pipe(mainBowerFiles(options || {}))
-      .pipe(concat(outFile))
-      .pipe(uglify())
-    .pipe(gulp.dest(outDir));
-}
-
-gulp.task("dependency:external:copy", function() {
-  return dependencyCopy("public/javascripts/external", "dependencies.js");
-});
-
-gulp.task("dependency:test:copy", function() {
-  return dependencyCopy("tests/frontend/dependencies", "test-dependencies.js", {includeDev: true});
-});
-
-gulp.task("test:frontend", ["karma:dependency:link"], function(done) {
-  new KarmaServer({
-    configFile: __dirname + "/karma.conf.js",
-    singleRun: true
-  }).start(done);
-});
-
-
 gulp.task("test:light", ["test:backend", "test:frontend"]);
+gulp.task("test:all", ["test:light", "test:e2e"]);
 
 gulp.task("auto:tests", function() {
   gulp.watch(["models/**/*.js", "routes/**/*.js"], ["test:backend"]);
   gulp.watch(["public/modules/**/*.js", "exampleApp.js"], ["test:frontend"]);
 });
+
+gulp.task("build", ["dependency:link"]);
