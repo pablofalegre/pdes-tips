@@ -29,6 +29,7 @@
   "devDependencies": {
     "angular-mocks": "^1.5.5",
     "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
     "express-mocks-http": "0.0.11",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
@@ -52,6 +53,7 @@
     "mockgoose": "^6.0.2",
     "node-mocks-http": "^1.5.2",
     "phantomjs-prebuilt": "^2.1.7",
+    "protractor": "^3.3.0",
     "proxyquire": "^1.7.7",
     "sinon": "^1.17.4",
     "sinon-chai": "^2.8.0",
