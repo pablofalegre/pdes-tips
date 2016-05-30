@@ -46,7 +46,7 @@ app.config([
 			controller: 'ActivitiesCtrl',
 			resolve: {
 			    activitiesPromise: ['activities', function(activities) {
-			    	
+
 			    	return activities.recent();
 			    }]
 			}

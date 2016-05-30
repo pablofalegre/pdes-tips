@@ -1,6 +1,7 @@
 // Include gulp
 var gulp = require('gulp');
 // Gulp plugins
+var jshint = require('gulp-jshint');
 var inject = require('gulp-inject');
 var concat = require('gulp-concat');
 var mainBowerFiles = require('gulp-main-bower-files');
@@ -86,7 +87,19 @@ gulp.task("test:all", ["test:light", "test:e2e"]);
 
 gulp.task("auto:tests", function() {
   gulp.watch(["models/**/*.js", "routes/**/*.js"], ["test:backend"]);
-  gulp.watch(["public/modules/**/*.js", "exampleApp.js"], ["test:frontend"]);
+  gulp.watch(["public/modules/**/*.js", "public/javascripts/angularApp.js"], ["test:frontend"]);
 });
 
 gulp.task("build", ["dependency:link"]);
+gulp.task('default', ['watch','auto:tests']);
+
+var sourceJshint = ['models/**/*.js','routes/**/*.js', 'public/javascripts/modules/**/*.js','public/javascripts/angularApp.js'];
+gulp.task('jshint', function() {
+  return gulp.src(sourceJshint)
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
+});
+gulp.task('watch', function() {
+  gulp.watch(sourceJshint, ['jshint']);
+  gulp.watch("bower.json", ['dependency:link']);
+});
