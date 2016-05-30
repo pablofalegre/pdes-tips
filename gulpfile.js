@@ -57,6 +57,7 @@ function dependencyCopy(outDir, outFile, options) {
   return gulp.src("bower.json")
       .pipe(mainBowerFiles(options || {}))
       .pipe(concat(outFile))
+      .pipe(uglify())
     .pipe(gulp.dest(outDir));
 }
 
