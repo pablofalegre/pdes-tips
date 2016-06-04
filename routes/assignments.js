@@ -1,3 +1,4 @@
+
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
@@ -8,34 +9,50 @@ var fullAuth = require('./fullAuth');
 var roles = require('../models/Roles');
 
 
-router.get('/',function(req, res, next) {
+router.get('/', function(req, res, next) {
 
-  Assignment.find(function(err, assignments){
-    if(err){ 
-    	console.log("error getting assignments " + err);
-    	return next(err); }
-    res.json(assignments);
-  });
+    Assignment.find(function(err, assignments) {
+        if (err) {
+            console.log("error getting assignments " + err);
+            return next(err);
+        }
+        res.json(assignments);
+    });
 });
 
 
 router.post('/', fullAuth([roles.director]), function(req, res, next) {
 
-  var assignment = new Assignment(req.body);
+    var assignment = new Assignment(req.body);
 
-  assignment.save(function(err, idea){
-    if(err){ return next(err); }
-    	res.json(assignment);
-  });
+    console.log('req.id = ' + req.body.id);
+    console.log('ass.id = ' + assignment._id);
+
+    var cb = function(err) {
+        if (err) {
+            console.log("error saving assignment " + err);
+            return next(err);
+        }
+        res.json(assignment);
+    };
+
+    if (req.body.id && req.body.id !== '') {
+        Assignment.update({_id : req.body.id}, {name : req.body.name}, cb);
+    } else {
+      assignment.save(cb);
+    }
+
+
 });
 
 
 router.put('/:assignment/delete', fullAuth([roles.director]), function(req, res, next) {
 
-	Assignment.findById(req.params.assignment).remove(function(err){
-		if(err){ return next(err); }
-		  res.json();
-  	});
+    Assignment.findById(req.params.assignment).remove(function(err) {
+        if (err) {
+            return next(err); }
+        res.json();
+    });
 });
 
 module.exports = router;

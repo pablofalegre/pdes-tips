@@ -40,11 +40,11 @@ describe('AssignmentCtrl', function() {
 
     	$scope.name = 'objetos 2';
 
-    	assignments.add = function(assignment){
+    	assignments.save = function(assignment){
     		this.assignments.push(assignment);
-    	}
+    	};
 
-	    $scope.addAssignment();
+	    $scope.saveAssignment();
 
       	$scope.assignments.should.eql([{ name : 'objetos 2'}]);
 

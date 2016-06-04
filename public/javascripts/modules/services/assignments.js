@@ -7,7 +7,7 @@ app.factory('assignments', ['$http', 'auth', function($http, auth){
     return {
         headers: {Authorization: 'Bearer '+auth.getToken()}
     };
-  }
+  };
 
   o.all = function() {
     return $http.get('/assignments').error(function(error){
@@ -19,14 +19,24 @@ app.factory('assignments', ['$http', 'auth', function($http, auth){
     });
   };
 
-  o.add = function(assignment) {
+  o.save = function(assignment) {
     return $http.post('/assignments', assignment, authHeader()).success(function(data){
         o.assignments.push(data);
     });
   };
 
+  o.update = function(idx, assignment) {
+    return $http.post('/assignments', assignment, authHeader()).success(function(data){
+
+        o.assignments.splice(idx, 1);
+
+
+        o.assignments.splice(idx, 0, data);
+    });
+  };
+
   o.delete = function(assignment) {
-    return $http.put('/assignments/'+ assignment._id + '/delete', null, authHeader()).success(function(data){
+    return $http.put('/assignments/'+ assignment._id + '/delete', null, authHeader()).success(function(){
       o.all();
     });
   };

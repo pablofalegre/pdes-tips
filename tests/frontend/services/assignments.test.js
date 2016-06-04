@@ -35,13 +35,13 @@ describe("assignments service", function() {
 
 	});
 
-	describe("#add()", function() {
+	describe("#save()", function() {
 
-		it("should call backend and add an assignment", function(done) {
+		it("should call backend and save an assignment", function(done) {
 
 			var dataMock = 'assignment';
 
-			var promise = assignments.add(dataMock);
+			var promise = assignments.save(dataMock);
 
 			promise.then(function() {
 				assignments.should.have.property("assignments").that.include(dataMock);
