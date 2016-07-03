@@ -120,7 +120,7 @@ gulp.task('bump-version', function () {
 // We hardcode the version change type to 'patch' but it may be a good idea to
 // use minimist (https://www.npmjs.com/package/minimist) to determine with a
 // command argument whether you are doing a 'major', 'minor' or a 'patch' change.
-  return gulp.src(['./bower.json', './package.json'])
+  return gulp.src(['package.json'])
     .pipe(bump({type: "patch"}).on('error', gutil.log))
     .pipe(gulp.dest('./'));
 });

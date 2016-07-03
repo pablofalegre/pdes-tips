@@ -1,3 +1,11 @@
+<a name="1.0.2"></a>
+## 1.0.2 (2016-07-03)
+
+* formatee main para probar deploy ([a48d31c](https://github.com/pablofalegre/pdes-tips/commit/a48d31c))
+* Moved git token to ENV, added conditional deploy in travis (#39) ([59a3b29](https://github.com/pablofalegre/pdes-tips/commit/59a3b29))
+
+
+
 <a name="1.0.1"></a>
 ## 1.0.1 (2016-07-03)
 
