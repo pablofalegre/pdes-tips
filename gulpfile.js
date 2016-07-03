@@ -131,18 +131,29 @@ gulp.task('commit-changes', function () {
     .pipe(git.commit('[Prerelease] Bumped version number'));
 });
 
-gulp.task('push-changes', function (cb) {
-  git.push('origin', 'master', cb);
+gulp.task('push-changes', function(cb) {
+   getBranchName(function(branch) {
+      git.push('origin', branch, cb);
+   });
 });
+
+function getBranchName(cb) {
+   git.revParse({args: '--abbrev-ref HEAD', cwd: __dirname}, function(err, branch) {
+      if (err) {
+        throw new Error('Error while getting currrent branch name', err);
+      }
+      cb(branch);
+   });
+}
 
 gulp.task('create-new-tag', function (cb) {
   var version = getPackageJsonVersion();
-  git.tag(version, 'Created Tag for version: ' + version, function (error) {
-    if (error) {
-      return cb(error);
-    }
-    git.push('origin', 'master', {args: '--tags'}, cb);
-  });
+  getBranchName(function(branch) {
+        git.tag('v' + version, 'Releasing version: ' + version, function(error) {
+            if (error) { return cb(error); }
+            git.push('origin', branch, {args: '--tags'}, cb);
+        });
+    });
 
   function getPackageJsonVersion () {
     // We parse the json file instead of using require because require caches
