@@ -102,7 +102,7 @@ gulp.task('changelog', function () {
     buffer: false
   })
     .pipe(conventionalChangelog({
-      preset: '' // Or to any other commit message convention you use.
+      preset: ''
     }))
     .pipe(gulp.dest('./'));
 });
@@ -110,9 +110,9 @@ gulp.task('changelog', function () {
 gulp.task('github-release', function(done) {
   conventionalGithubReleaser({
     type: "oauth",
-    token: '94e0b142ce645c7e1a378106561df4a1a1dfa14d' // change this to your own GitHub token or use an environment variable
+    token: process.env.CONVENTIONAL_GITHUB_RELEASER_TOKEN
   }, {
-    preset: 'pdes-tips' // Or to any other commit message convention you use.
+    preset: 'pdes-tips'
   }, done);
 });
 
