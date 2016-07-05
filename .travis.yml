@@ -12,3 +12,6 @@ deploy:
   app: pdes-tips
   api_key:
     secure: $HEROKU_API_KEY
+  on:
+    all_branches: true
+    tags: true
