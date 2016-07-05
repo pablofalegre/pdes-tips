@@ -1,3 +1,12 @@
+<a name="1.0.3"></a>
+## 1.0.3 (2016-07-05)
+
+* cambio de titulo en la home ([d6aef11](https://github.com/pablofalegre/pdes-tips/commit/d6aef11))
+* Closes pablofalegre/pdes-tips#33 . Poder editar materias. (#34) ([919b50a](https://github.com/pablofalegre/pdes-tips/commit/919b50a)), closes [pablofalegre/pdes-tips#33](https://github.com/pablofalegre/pdes-tips/issues/33) [#34](https://github.com/pablofalegre/pdes-tips/issues/34)
+* probando PR ([f150bd3](https://github.com/pablofalegre/pdes-tips/commit/f150bd3))
+
+
+
 <a name="1.0.2"></a>
 ## 1.0.2 (2016-07-03)
 
